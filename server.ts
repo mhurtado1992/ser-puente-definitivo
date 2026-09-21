@@ -659,7 +659,7 @@ app.post("/api/chat", async (req, res) => {
 });
 
 // Collective Voices Endpoints
-const VOICES_FILE = path.join(process.cwd(), "data", "voices.json");
+const VOICES_FILE = process.env.VOICES_FILE || path.join(process.cwd(), "data", "voices.json");
 let collectiveVoices: Array<{
   id: string;
   visitorId: string;
