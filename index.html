@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ser Puente — Voces del río</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;500;600;900&display=swap" rel="stylesheet">
+<style>
+  :root { --rule:#2b3cdb; --paper:#EFEBE0; --bg:#F2EDE1; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); scroll-behavior:smooth; }
+  body { color:var(--rule); font-family:'Martian Mono',ui-monospace,Menlo,monospace; }
+  a { color:var(--rule); text-decoration:none; }
+  a:hover { opacity:.6; }
+  input::placeholder, textarea::placeholder { color:rgba(43,60,219,.42); }
+
+  .page { min-height:100dvh; display:flex; flex-direction:column; padding:clamp(0px,3vw,46px) clamp(0px,3vw,46px) 0; }
+  .sheet { width:100%; max-width:1400px; margin:0 auto; border:1px solid var(--rule); background:var(--paper); display:flex; flex-direction:column; flex:1; min-height:0; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:18px; border-bottom:1px solid var(--rule); padding:16px clamp(16px,2.2vw,28px); }
+  .wordmark { font-size:11px; font-weight:600; letter-spacing:.14em; cursor:pointer; user-select:none; }
+  .nav { display:flex; align-items:center; gap:clamp(14px,2vw,30px); font-size:9px; letter-spacing:.16em; }
+  .pad { padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); }
+
+  .intro { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px clamp(20px,4vw,60px);
+           padding:clamp(20px,2.6vw,34px) clamp(16px,2.2vw,28px) clamp(28px,4vw,54px); border-bottom:1px solid var(--rule); }
+  .col { display:flex; flex-direction:column; gap:clamp(46px,9vh,96px); }
+  .micro { font-size:10px; letter-spacing:.14em; line-height:2; }
+  .micro.b { font-weight:900; letter-spacing:.16em; }
+  .hero { display:block; width:100%; height:clamp(280px,52vh,540px); object-fit:cover; }
+
+  .cells { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); border-top:1px solid var(--rule); }
+  .cell { cursor:pointer; text-align:left; background:transparent; color:inherit; font:inherit; border:0;
+          border-bottom:1px solid var(--rule); border-right:1px solid var(--rule);
+          padding:clamp(18px,2.2vw,26px) clamp(16px,2.2vw,28px); display:flex; flex-direction:column; gap:clamp(26px,4vh,40px);
+          transition:background 180ms ease; }
+  .cell:hover { background:rgba(43,60,219,.05); }
+  .label { font-size:9px; font-weight:500; letter-spacing:.18em; }
+  .pill { align-self:flex-start; display:inline-flex; align-items:center; gap:14px; border:1px solid var(--rule); border-radius:2px;
+          padding:12px 20px; min-height:44px; font-size:9px; font-weight:600; letter-spacing:.2em;
+          transition:background 180ms ease,color 180ms ease; }
+  .cell:hover .pill, .ghost:hover { background:var(--rule); color:var(--paper); }
+  .empty { min-height:180px; border-bottom:1px solid var(--rule); }
+  .curatorial { margin:0; font-size:10px; font-weight:300; letter-spacing:.1em; line-height:2.1; text-transform:uppercase; text-wrap:pretty; }
+
+  .ghost { cursor:pointer; background:transparent; color:inherit; font:inherit; border:1px solid rgba(43,60,219,.45); border-radius:2px;
+           padding:11px 16px; min-height:40px; font-size:9px; font-weight:500; letter-spacing:.16em;
+           transition:background 180ms ease,color 180ms ease; }
+
+  .thread { flex:1; min-height:240px; overflow-y:auto; display:flex; flex-direction:column; }
+  .msg { display:flex; flex-direction:column; gap:12px; border-bottom:1px solid rgba(43,60,219,.28);
+         padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); }
+  .msg .who { font-size:9px; font-weight:600; letter-spacing:.2em; }
+  .msg p { margin:0; width:fit-content; max-width:min(72ch,100%); font-size:11px; line-height:2.1; text-wrap:pretty; white-space:pre-wrap; }
+  .msg.rio { align-items:flex-start; }
+  .msg.rio p { font-weight:300; letter-spacing:.06em; }
+  .msg.yo { align-items:flex-end; text-align:right; }
+  .msg.yo p { font-weight:400; letter-spacing:.12em; border:1px solid rgba(43,60,219,.45); background:rgba(43,60,219,.06); padding:14px 18px; }
+  .typing { display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(43,60,219,.28); padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); font-size:9px; letter-spacing:.2em; }
+  .typing span:last-child { font-weight:300; animation:blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:.25} 50%{opacity:1} }
+  .suggest { display:flex; flex-wrap:wrap; gap:10px; border-top:1px solid var(--rule); padding:clamp(14px,1.8vw,20px) clamp(16px,2.2vw,28px); }
+
+  form.composer { margin-top:auto; position:sticky; bottom:0; background:var(--paper); border-top:1px solid var(--rule); display:flex; align-items:stretch; }
+  form.composer input { flex:1; min-width:0; background:transparent; border:0; outline:none; color:var(--rule);
+        font-family:inherit; font-weight:300; font-size:10px; letter-spacing:.14em; padding:20px clamp(16px,2.2vw,28px); }
+  form.composer button { cursor:pointer; border:0; border-left:1px solid var(--rule); background:transparent; color:var(--rule);
+        font-family:inherit; font-size:10px; font-weight:500; letter-spacing:.2em; padding:0 clamp(20px,3vw,40px); min-height:52px;
+        transition:background 180ms ease,color 180ms ease; }
+  form.composer button:hover { background:var(--rule); color:var(--paper); }
+
+  .modal-overlay { position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal-body { width:100%; max-width:850px; height:85vh; max-height:85vh; background:var(--paper); border:1px solid var(--rule); padding:24px; display:flex; flex-direction:column; gap:16px; overflow:hidden; }
+  .modal-title { font-size:11px; font-weight:600; letter-spacing:.18em; border-bottom:1px solid var(--rule); padding-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+  
+  .tab-bar { display:flex; gap:8px; border-bottom:1px solid var(--rule); padding-bottom:8px; flex-shrink:0; overflow-x:auto; }
+  .tab-btn { cursor:pointer; background:transparent; border:1px solid transparent; color:var(--rule); font-family:inherit; font-size:9px; font-weight:600; letter-spacing:.12em; padding:8px 12px; transition:all 180ms ease; white-space:nowrap; }
+  .tab-btn.active { border-color:var(--rule); background:var(--rule); color:var(--paper); }
+
+  .tab-content { flex:1; overflow-y:auto; padding-right:6px; display:flex; flex-direction:column; gap:16px; }
+  .modal-label { font-size:9px; font-weight:600; letter-spacing:.16em; margin-bottom:6px; display毛:block; }
+  .modal-textarea { width:100%; height:200px; background:transparent; border:1px solid var(--rule); color:var(--rule); font-family:inherit; font-size:10px; padding:12px; outline:none; line-height:1.8; resize:vertical; }
+
+  .voice-item { border:1px solid rgba(43,60,219,.3); padding:10px; margin-bottom:8px; font-size:9px; line-height:1.6; }
+  .voice-item strong { display:block; color:var(--rule); margin-bottom:2px; }
+
+  [hidden] { display:none !important; }
+</style>
+<script type="importmap">
+  {
+    "imports": {
+      "@google/genai": "https://esm.run/@google/genai"
+    }
+  }
+</script>
+</head>
+<body>
+<div class="page">
+  <div class="sheet">
+    <!-- INICIO -->
+    <div id="home" style="display:flex;flex-direction:column;flex:1;">
+      <div class="bar">
+        <span class="wordmark secret-trigger" title="Ser Puente">SER PUENTE</span>
+        <div class="nav">
+          <button type="button" class="ghost" id="openAboutBtn" style="padding:6px 12px; min-height:auto;">SOBRE LA OBRA</button>
+        </div>
+      </div>
+
+      <div class="intro">
+        <div class="col">
+          <span class="micro b">VOCES DEL RÍO</span>
+          <span class="micro">POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE</span>
+        </div>
+        <div class="col">
+          <span class="micro">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
+        </div>
+      </div>
+
+      <img id="rio" class="hero" src="/rio.jpg" alt="El río San Pedro">
+
+      <div id="voces" class="cells">
+        <button type="button" class="cell" data-mode="guiado">
+          <span class="label">PASO A PASO</span>
+          <span class="micro">EL JUEGO DE<br>LAS CONEXIONES</span>
+          <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
+        </button>
+        <button type="button" class="cell" data-mode="libre">
+          <span class="label">DIÁLOGO LIBRE</span>
+          <span class="micro">EXPLORA LAS<br>VOCES DEL RÍO</span>
+          <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
+        </button>
+        <div id="obra" class="empty"></div>
+      </div>
+
+      <div class="pad" style="border-bottom:1px solid var(--rule);">
+        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de perceptiones como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chat" hidden style="display:flex;flex-direction:column;flex:1;min-height:0;">
+      <div class="bar">
+        <button type="button" class="ghost" id="back" style="display:inline-flex;align-items:center;gap:10px;"><span style="font-size:11px;">←</span> VOLVER</button>
+        <span class="wordmark secret-trigger">SER PUENTE</span>
+        <span class="mode label" id="modeLabel" style="font-weight:400;letter-spacing:.18em;text-align:right;">DIÁLOGO LIBRE</span>
+      </div>
+
+      <div class="thread" id="thread"></div>
+      <div class="suggest" id="suggest"></div>
+    </div>
+
+    <form class="composer" id="composer">
+      <input id="field" type="text" placeholder="HABLA CON EL RÍO SAN PEDRO…" aria-label="Habla con el río San Pedro">
+      <button type="submit" id="sendBtn">ENVIAR</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL SOBRE LA OBRA -->
+<div id="aboutModal" class="modal-overlay" hidden>
+  <div class="modal-body">
+    <div class="modal-title">
+      <span>SOBRE LA OBRA — SER PUENTE</span>
+      <button type="button" class="ghost" id="closeAboutBtn" style="padding:4px 10px;">✕ CERRAR</button>
+    </div>
+    <div style="font-size:10px; line-height:2; text-transform:uppercase; overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
+      <p><strong>SER PUENTE</strong> es una instalación artística e interactiva creada por <strong>María Hurtado Izquierdo</strong> en Valdivia, Chile.</p>
+      <p>La obra explora la memoria viva de la cuenca del Río San Pedro (Wazalafken), desde su origen en el Lago Riñihue hasta su desembocadura.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PANEL DE CURADURÍA -->
+<div id="curatorModal" class="modal-overlay" hidden>
+  <div class="modal-body">
+    <div class="modal-title">
+      <span>PANEL DEL ARTISTA & CURADURÍA DE LA EXPOSICIÓN</span>
+      <button type="button" class="ghost" id="closeCuratorBtn" style="padding:4px 10px;">✕ CERRAR</button>
+    </div>
+
+    <div class="tab-bar">
+      <button type="button" class="tab-btn active" data-tab="tab-prompt">SYSTEM PROMPT</button>
+      <button type="button" class="tab-btn" data-tab="tab-voices">BITÁCORA DE VOCES</button>
+    </div>
+
+    <div id="tab-prompt" class="tab-content">
+      <label class="modal-label">INSTRUCCIÓN DE SISTEMA (PROMPT POÉTICO DEL RÍO):</label>
+      <textarea id="promptInput" class="modal-textarea"></textarea>
+    </div>
+
+    <div id="tab-voices" class="tab-content" hidden>
+      <label class="modal-label">VOCES RECOGIDAS EN ESTA SESIÓN:</label>
+      <div id="voicesLogContainer" style="font-size:9px; border:1px solid var(--rule); padding:12px; height:200px; overflow-y:auto;"></div>
+      <button type="button" class="ghost" id="exportVoicesBtn" style="margin-top:8px;">DESCARGAR EXCEL (CSV)</button>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--rule); padding-top:12px;">
+      <button type="button" class="ghost" id="saveCuratorBtn" style="background:var(--rule); color:var(--paper);">GUARDAR CAMBIOS</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { GoogleGenAI } from '@google/genai';
+
+const API_KEY = "AQ.Ab8RN6Id_J8Abd18Io3v2Ef0ihwUND_xef4cm4CaxMH6gN0L1A";
+
+const SUGERENCIAS = {
+  guiado: [["UN RECUERDO DE LLUVIA","Recuerdo la lluvia golpeando el techo de zinc de mi abuela."],
+           ["UN CRUCE EN BOTE","Crucé el río en bote una vez, siendo niña."]],
+  libre:  [["PECES ENDÉMICOS","Háblame de los peces únicos que habitan tus aguas subacuáticas."],
+           ["LAS ROCAS Y LA TIERRA","¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"]]
+};
+
+const home = document.getElementById('home'), chat = document.getElementById('chat');
+const thread = document.getElementById('thread'), suggest = document.getElementById('suggest');
+const field = document.getElementById('field'), composer = document.getElementById('composer');
+const curatorModal = document.getElementById('curatorModal'), aboutModal = document.getElementById('aboutModal');
+const promptInput = document.getElementById('promptInput');
+
+let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
+
+let promptActual = `ERES EL RÍO SAN PEDRO, TAMBIÉN LLAMADO WAZALAFKEN.
+Hablas en primera persona, como el río mismo — un cauce vivo, un ecosistema con rocas, peces y memorias territoriales de Valdivia.
+
+## REGLA DE ORO INTERESPECIE Y MODO DIÁLOGO LIBRE:
+- Si el usuario está en Diálogo Libre o pregunta sobre Lola Hoffmann, geología, plantas o peces, RESPONDE DIRECTAMENTE con datos científicos, filosóficos y poéticos reales sin pedir recuerdos ni repetir plantillas.
+- Lola Hoffmann enseña que el flujo constante del río es la mejor metáfora para encontrar el propio cauce vital y fluir libremente sin estancarse.
+- Marco Valle es el geólogo que lee el tiempo en los esquistos grises del río.
+- Maximina Queumir cultiva bonsáis nativos con paciencia ancestral.
+- PROHIBICIÓN DEL RIÑIHUAZO: Queda estrictamente prohibido mencionar el terremoto de 1960 a menos que te pregunten directamente por él.
+
+FORMATO OBLIGATORIO:
+- Responde siempre en prosa fluida y natural. NUNCA uses listas numeradas, viñetas ni negritas.`;
+
+function add(who, text){
+  const el = document.createElement('div');
+  el.className = 'msg ' + (who === 'rio' ? 'rio' : 'yo');
+  el.innerHTML = '<span class="who">' + (who === 'rio' ? 'EL RÍO' : 'TÚ') + '</span><p></p>';
+  el.querySelector('p').textContent = text;
+  thread.appendChild(el); 
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function typing(on){
+  let t = document.getElementById('typing');
+  if (on && !t){ 
+    t = document.createElement('div'); t.id='typing'; t.className='typing';
+    t.innerHTML = '<span>EL RÍO</span><span>ESCRIBIENDO ···</span>'; 
+    thread.appendChild(t); thread.scrollTop = thread.scrollHeight; 
+  }
+  if (!on && t) t.remove();
+}
+
+async function consultarGeminiDirecto(mensajeUsuario) {
+  try {
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
+    
+    const contents = history.map(h => ({
+      role: h.role === 'user' ? 'user' : 'model',
+      parts: [{ text: h.parts[0].text }]
+    }));
+    contents.push({ role: 'user', parts: [{ text: mensajeUsuario }] });
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: contents,
+      config: {
+        systemInstruction: promptActual,
+        temperature: 0.7,
+        maxOutputTokens: 1000
+      }
+    });
+
+    const reply = response.text || "Las aguas siguen su curso en calma.";
+    
+    history.push({ role: 'user', parts: [{ text: mensajeUsuario }] });
+    history.push({ role: 'model', parts: [{ text: reply }] });
+
+    listaVocesPublico.push({ timestamp: new Date().toISOString(), userMessage: mensajeUsuario, riverReply: reply });
+
+    return reply;
+  } catch (err) {
+    console.error("Error directo Gemini:", err);
+    return "Ocurrió una interrupción en las aguas. Por favor presiona enviar de nuevo.";
+  }
+}
+
+async function enviar(texto){
+  const t = (texto || field.value || '').trim(); 
+  if (!t) return;
+  if (chat.hasAttribute('hidden')) { entrar('libre', t); return; }
+  
+  add('yo', t); field.value = ''; typing(true);
+  const respuesta = await consultarGeminiDirecto(t);
+  typing(false);
+  add('rio', respuesta);
+}
+
+function entrar(m, primerTexto){
+  modo = m; history = []; thread.innerHTML = '';
+  document.getElementById('modeLabel').textContent = m === 'guiado' ? 'PASO A PASO / EL JUEGO DE LAS CONEXIONES' : 'DIÁLOGO LIBRE';
+  const saludoInicial = m === 'guiado'
+    ? 'Soy el río San Pedro, también Wazalafken. Guardo muchas vidas y voces. Juguemos a ver cómo se conectan las memorias: ¿me cuentas un recuerdo que hayas tenido en un cuerpo de agua?'
+    : 'Hola, soy el río San Pedro o Wazalafken. Por mis aguas corren historias, memoria y vidas. ¿Qué te gustaría conversar hoy?';
+    
+  add('rio', saludoInicial);
+  suggest.innerHTML = '';
+  SUGERENCIAS[m].forEach(([label, text]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
+    b.onclick = () => enviar(text);
+    suggest.appendChild(b);
+  });
+
+  home.style.display = 'none'; home.setAttribute('hidden', '');
+  chat.removeAttribute('hidden'); chat.style.display = 'flex';
+  if (primerTexto) enviar(primerTexto);
+}
+
+document.querySelectorAll('.secret-trigger').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    clickCount++;
+    if (clickCount >= 3) {
+      promptInput.value = promptActual;
+      curatorModal.removeAttribute('hidden');
+      clickCount = 0;
+    }
+    setTimeout(() => { clickCount = 0; }, 1500);
+  });
+});
+
+document.getElementById('saveCuratorBtn').addEventListener('click', () => {
+  promptActual = promptInput.value;
+  curatorModal.setAttribute('hidden', '');
+  alert("Los ajustes de la voz del río se han guardado.");
+});
+
+document.getElementById('openAboutBtn').addEventListener('click', () => aboutModal.removeAttribute('hidden'));
+document.getElementById('closeAboutBtn').addEventListener('click', () => aboutModal.setAttribute('hidden', ''));
+document.getElementById('closeCuratorBtn').addEventListener('click', () => curatorModal.setAttribute('hidden', ''));
+
+composer.addEventListener('submit', (e) => { e.preventDefault(); enviar(field.value); });
+document.querySelectorAll('.cell').forEach(c => c.addEventListener('click', () => entrar(c.dataset.mode)));
+document.getElementById('back').addEventListener('click', () => { chat.style.display = 'none'; chat.setAttribute('hidden', ''); home.removeAttribute('hidden'); home.style.display = 'flex'; });
+</script>
+</body>
+</html>

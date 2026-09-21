@@ -1,0 +1,744 @@
+import express from "express";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import { GoogleGenAI } from "@google/genai";
+import { PDFParse } from "pdf-parse";
+// @ts-ignore
+import mammoth from "mammoth";
+// @ts-ignore
+import WordExtractor from "word-extractor";
+import { INITIAL_SYSTEM_INSTRUCTION, DEFAULT_DOCUMENTS, type KnowledgeDocument } from "./src/server/knowledge.ts";
+import { DocumentIndex } from "./src/server/retrieval.ts";
+
+dotenv.config();
+
+const currentFilePath = typeof __filename !== 'undefined' ? __filename : process.cwd();
+const currentDirPath = path.dirname(currentFilePath);
+
+const app = express();
+const PORT = 3000;
+
+// High limit to support uploading 500 pages of PDFs / Word
+app.use(express.json({ limit: "60mb" }));
+
+const DATA_DIR = path.join(process.cwd(), "data", "documents");
+const PROMPT_FILE = path.join(process.cwd(), "data", "system_prompt.txt");
+const RETRIEVAL_MODE_FILE = path.join(process.cwd(), "data", "retrieval_mode.txt");
+
+// Ensure storage directories exist safely (without crashing on read-only filesystems)
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn("No se pudo crear DATA_DIR en disco:", e);
+}
+
+// Load persisted system prompt or initialize
+let activeSystemInstruction = INITIAL_SYSTEM_INSTRUCTION;
+try {
+  if (fs.existsSync(PROMPT_FILE)) {
+    activeSystemInstruction = fs.readFileSync(PROMPT_FILE, "utf-8");
+  }
+} catch (e) {
+  console.warn("Could not read custom prompt file, using default:", e);
+}
+
+// Load persisted retrieval mode (default: "smart_rag" for max token efficiency & multi-user concurrency)
+let retrievalMode: "smart_rag" | "full_context" = "smart_rag";
+try {
+  if (fs.existsSync(RETRIEVAL_MODE_FILE)) {
+    const saved = fs.readFileSync(RETRIEVAL_MODE_FILE, "utf-8").trim();
+    if (saved === "full_context" || saved === "smart_rag") {
+      retrievalMode = saved;
+    }
+  }
+} catch {}
+
+// In-memory document collection and semantic search index
+let documents: KnowledgeDocument[] = [];
+const docIndex = new DocumentIndex();
+
+function loadDocumentsFromDisk() {
+  try {
+    if (fs.existsSync(DATA_DIR)) {
+      const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith(".json"));
+      if (files.length > 0) {
+        documents = files.map((file) => {
+          const raw = fs.readFileSync(path.join(DATA_DIR, file), "utf-8");
+          return JSON.parse(raw) as KnowledgeDocument;
+        });
+        console.log(`Cargados ${documents.length} documentos desde el disco.`);
+      } else {
+        documents = [...DEFAULT_DOCUMENTS];
+        documents.forEach(saveDocumentToDisk);
+        console.log(`Inicializados ${documents.length} documentos predeterminados.`);
+      }
+    } else {
+      documents = [...DEFAULT_DOCUMENTS];
+    }
+  } catch (err) {
+    console.warn("Usando documentos predeterminados en memoria:", err);
+    documents = [...DEFAULT_DOCUMENTS];
+  }
+  docIndex.reindex(documents);
+}
+
+function saveDocumentToDisk(doc: KnowledgeDocument) {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    const filePath = path.join(DATA_DIR, `${doc.id}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(doc, null, 2), "utf-8");
+  } catch (e) {
+    console.warn(`No se pudo persistir doc ${doc.id} en disco (modo memoria activo):`, e);
+  }
+}
+
+function deleteDocumentFromDisk(id: string) {
+  try {
+    const filePath = path.join(DATA_DIR, `${id}.json`);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (e) {
+    console.warn(`No se pudo eliminar documento ${id} del disco:`, e);
+  }
+}
+
+loadDocumentsFromDisk();
+
+let genAIClient: GoogleGenAI | null = null;
+function getGenAI(): GoogleGenAI {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) {
+    throw new Error("La variable de entorno GEMINI_API_KEY no está configurada.");
+  }
+  if (!genAIClient) {
+    genAIClient = new GoogleGenAI({ apiKey: key });
+  }
+  return genAIClient;
+}
+
+// Build context dynamically based on retrieval mode
+function compileContext(userQuery?: string): string {
+  let docsText = "";
+
+  if (retrievalMode === "smart_rag" && docIndex.totalChunks > 0) {
+    // Retrieve top 4 most relevant passages for this specific query
+    const relevantChunks = docIndex.search(userQuery || "", 4);
+    docsText = relevantChunks
+      .map(
+        (chunk, idx) =>
+          `[PASAJES CLAVE ${idx + 1} DE "${chunk.docTitle}" (${chunk.category})]:\n${chunk.text}`
+      )
+      .join("\n\n");
+  } else {
+    // Full context mode (fallback or manual toggle)
+    docsText = documents
+      .map((doc, idx) => `--- DOCUMENTO ${idx + 1}: ${doc.title} (${doc.category}) ---\n${doc.content}`)
+      .join("\n\n");
+  }
+
+  return `${activeSystemInstruction}
+
+--- BASE DE CONOCIMIENTO Y VOCES REALES DE LA CUENCA DEL RÍO SAN PEDRO (TESTIMONIOS, HISTORIA Y ARCHIVOS) ---
+${docsText}
+--- FIN DE LA BASE DE CONOCIMIENTO ---`;
+}
+
+// Health check
+app.get("/api/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    hasApiKey: Boolean(process.env.GEMINI_API_KEY),
+    model: "gemini-2.5-flash",
+  });
+});
+
+// Config & documents summary for the curator / exhibition settings
+app.get("/api/config", (_req, res) => {
+  const totalPages = documents.reduce((sum, d) => sum + (d.pageCountApprox || 10), 0);
+  const totalWords = documents.reduce((sum, d) => sum + d.content.split(/\s+/).length, 0);
+
+  const estimatedTokensPerQuery =
+    retrievalMode === "smart_rag"
+      ? Math.min(3200, Math.round(activeSystemInstruction.length / 4) + 1600)
+      : Math.round((totalWords + activeSystemInstruction.split(/\s+/).length) / 0.75);
+
+  res.json({
+    systemInstruction: activeSystemInstruction,
+    documentsCount: documents.length,
+    documents: documents.map((d) => ({
+      id: d.id,
+      title: d.title,
+      category: d.category,
+      preview: d.content.slice(0, 150) + "...",
+      pageCountApprox: d.pageCountApprox,
+    })),
+    totalPagesApprox: totalPages,
+    hasApiKey: Boolean(process.env.GEMINI_API_KEY),
+    retrievalMode,
+    totalChunks: docIndex.totalChunks,
+    estimatedTokensPerQuery,
+  });
+});
+
+// Toggle retrieval mode (Smart RAG vs Full Context)
+app.post("/api/config/retrieval-mode", (req, res) => {
+  const { mode } = req.body;
+  if (mode === "smart_rag" || mode === "full_context") {
+    retrievalMode = mode;
+    try {
+      fs.writeFileSync(RETRIEVAL_MODE_FILE, retrievalMode, "utf-8");
+    } catch (e) {
+      console.warn("No se pudo guardar retrieval_mode en disco:", e);
+    }
+    console.log(`[Modo de Búsqueda] Cambiado a: ${retrievalMode}`);
+    res.json({ success: true, retrievalMode });
+  } else {
+    res.status(400).json({ error: "Modo no válido. Usa 'smart_rag' o 'full_context'." });
+  }
+});
+
+// Update the system instruction
+app.post("/api/update-instruction", (req, res) => {
+  const { instruction } = req.body;
+  if (!instruction || typeof instruction !== "string") {
+    res.status(400).json({ error: "La instrucción es obligatoria y debe ser texto." });
+    return;
+  }
+  activeSystemInstruction = instruction.trim();
+  try {
+    fs.writeFileSync(PROMPT_FILE, activeSystemInstruction, "utf-8");
+  } catch (e) {
+    console.warn("No se pudo persistir el prompt en archivo:", e);
+  }
+  res.json({ success: true, updatedLength: activeSystemInstruction.length });
+});
+
+// Helper function to extract plain text from PDF, Word (.docx / .doc), and text files
+async function extractTextFromFileBuffer(
+  buffer: Buffer,
+  filename: string,
+  fileType?: string
+): Promise<{ text: string; pages: number }> {
+  const lowerName = (filename || "").toLowerCase();
+  const isPdf = fileType === "pdf" || lowerName.endsWith(".pdf");
+  const isDocx = fileType === "docx" || lowerName.endsWith(".docx");
+  const isDoc = fileType === "doc" || lowerName.endsWith(".doc");
+
+  if (isPdf) {
+    const parser = new (PDFParse as any)({ data: buffer });
+    const parsed = await parser.getText();
+    const text = (parsed.text || "").trim();
+    const pages = (parsed as any).total || Math.max(1, Math.ceil(text.length / 1800));
+    try {
+      await parser.destroy?.();
+    } catch {}
+    return { text, pages };
+  }
+
+  if (isDocx || isDoc) {
+    let text = "";
+    if (isDocx) {
+      try {
+        const result = await mammoth.extractRawText({ buffer });
+        text = (result.value || "").trim();
+      } catch (errMammoth) {
+        console.warn("Fallo con mammoth en .docx, intentando word-extractor:", errMammoth);
+        const extractor = new WordExtractor();
+        const extracted = await extractor.extract(buffer);
+        text = (extracted.getBody() || "").trim();
+      }
+    } else {
+      try {
+        const extractor = new WordExtractor();
+        const extracted = await extractor.extract(buffer);
+        text = (extracted.getBody() || "").trim();
+      } catch (errWord) {
+        console.warn("Fallo con word-extractor en .doc, intentando mammoth:", errWord);
+        const result = await mammoth.extractRawText({ buffer });
+        text = (result.value || "").trim();
+      }
+    }
+    const pages = Math.max(1, Math.ceil(text.length / 1800));
+    return { text, pages };
+  }
+
+  // Fallback: UTF-8 plain text
+  const text = buffer.toString("utf-8").trim();
+  const pages = Math.max(1, Math.ceil(text.length / 1800));
+  return { text, pages };
+}
+
+// Parse file endpoint
+app.post("/api/documents/parse-file", async (req, res) => {
+  try {
+    const { filename, base64, base64Data, fileType } = req.body;
+    const rawBase64 = base64 || base64Data;
+    if (!filename || !rawBase64) {
+      res.status(400).json({ error: "Nombre de archivo y contenido en base64 son requeridos." });
+      return;
+    }
+
+    const cleanBase64 = String(rawBase64).replace(/^data:.*?;base64,/, "");
+    const buffer = Buffer.from(cleanBase64, "base64");
+    const { text, pages } = await extractTextFromFileBuffer(buffer, filename, fileType);
+
+    if (!text || text.length === 0) {
+      res.status(400).json({
+        error: `No se pudo extraer texto de "${filename}". Verifica que no sea un documento escaneado como imagen o protegido con contraseña.`,
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      content: text,
+      pageCountApprox: pages,
+      charCount: text.length,
+      filename,
+    });
+  } catch (err: any) {
+    console.error("Error al procesar archivo en /api/documents/parse-file:", err);
+    res.status(500).json({
+      error: `Error al procesar "${req.body?.filename || "archivo"}": ` + (err?.message || "Error desconocido"),
+    });
+  }
+});
+
+// Single-step upload & index endpoint
+app.post("/api/documents/upload-file", async (req, res) => {
+  try {
+    const { filename, base64, base64Data, category, fileType } = req.body;
+    const rawBase64 = base64 || base64Data;
+    if (!filename || !rawBase64) {
+      res.status(400).json({ error: "Nombre de archivo y contenido en base64 son requeridos." });
+      return;
+    }
+
+    const cleanBase64 = String(rawBase64).replace(/^data:.*?;base64,/, "");
+    const buffer = Buffer.from(cleanBase64, "base64");
+    const { text, pages } = await extractTextFromFileBuffer(buffer, filename, fileType);
+
+    if (!text || text.length === 0) {
+      res.status(400).json({
+        error: `No se pudo extraer texto de "${filename}". Verifica que el documento contenga texto legible.`,
+      });
+      return;
+    }
+
+    const cleanTitle = filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+    const newDoc: KnowledgeDocument = {
+      id: `doc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      title: cleanTitle,
+      category: category || "Archivos & Testimonios de la Exposición",
+      content: text,
+      pageCountApprox: pages,
+    };
+
+    documents.push(newDoc);
+    saveDocumentToDisk(newDoc);
+    docIndex.reindex(documents);
+
+    res.json({
+      success: true,
+      document: {
+        id: newDoc.id,
+        title: newDoc.title,
+        category: newDoc.category,
+        pageCountApprox: newDoc.pageCountApprox,
+        charCount: text.length,
+        preview: text.substring(0, 150) + "...",
+      },
+      totalDocuments: documents.length,
+    });
+  } catch (err: any) {
+    console.error("Error al incorporar documento en /api/documents/upload-file:", err);
+    res.status(500).json({
+      error: `Error al incorporar "${req.body?.filename || "documento"}": ` + (err?.message || "desconocido"),
+    });
+  }
+});
+
+// Upload PDF
+app.post("/api/upload-pdf", async (req, res) => {
+  try {
+    const { filename, base64, base64Data, category } = req.body;
+    const rawBase64 = base64 || base64Data;
+    if (!filename || !rawBase64) {
+      res.status(400).json({ error: "Nombre de archivo y contenido base64 son requeridos." });
+      return;
+    }
+
+    const cleanBase64 = String(rawBase64).replace(/^data:.*?;base64,/, "");
+    const pdfBuffer = Buffer.from(cleanBase64, "base64");
+    const { text, pages } = await extractTextFromFileBuffer(pdfBuffer, filename, "pdf");
+
+    if (!text) {
+      res.status(400).json({
+        error: "No se pudo extraer texto del PDF. Podría ser un documento escaneado como imagen sin capa de texto OCR.",
+      });
+      return;
+    }
+
+    const newDoc: KnowledgeDocument = {
+      id: `pdf-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      title: filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+      category: category || "Documento PDF",
+      content: text,
+      pageCountApprox: pages,
+    };
+
+    documents.push(newDoc);
+    saveDocumentToDisk(newDoc);
+    docIndex.reindex(documents);
+
+    res.json({
+      success: true,
+      document: {
+        id: newDoc.id,
+        title: newDoc.title,
+        category: newDoc.category,
+        pageCountApprox: newDoc.pageCountApprox,
+        charCount: text.length,
+      },
+      totalDocuments: documents.length,
+    });
+  } catch (err: any) {
+    console.error("Error al procesar PDF:", err);
+    res.status(500).json({
+      error: "Error al procesar el archivo PDF: " + (err?.message || "desconocido"),
+    });
+  }
+});
+
+// Upload Word
+app.post("/api/upload-word", async (req, res) => {
+  try {
+    const { filename, base64, base64Data, category } = req.body;
+    const rawBase64 = base64 || base64Data;
+    if (!filename || !rawBase64) {
+      res.status(400).json({ error: "Nombre de archivo y contenido base64 son requeridos." });
+      return;
+    }
+
+    const cleanBase64 = String(rawBase64).replace(/^data:.*?;base64,/, "");
+    const docBuffer = Buffer.from(cleanBase64, "base64");
+    const { text, pages } = await extractTextFromFileBuffer(docBuffer, filename, "docx");
+
+    if (!text) {
+      res.status(400).json({
+        error: "No se pudo extraer texto del documento de Word. Verifica que el archivo contenga texto.",
+      });
+      return;
+    }
+
+    const newDoc: KnowledgeDocument = {
+      id: `doc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      title: filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+      category: category || "Documento Word",
+      content: text,
+      pageCountApprox: pages,
+    };
+
+    documents.push(newDoc);
+    saveDocumentToDisk(newDoc);
+    docIndex.reindex(documents);
+
+    res.json({
+      success: true,
+      document: {
+        id: newDoc.id,
+        title: newDoc.title,
+        category: newDoc.category,
+        pageCountApprox: newDoc.pageCountApprox,
+        charCount: text.length,
+      },
+      totalDocuments: documents.length,
+    });
+  } catch (err: any) {
+    console.error("Error al procesar archivo Word:", err);
+    res.status(500).json({
+      error: "Error al procesar el archivo Word: " + (err?.message || "desconocido"),
+    });
+  }
+});
+
+// Upload Text
+app.post("/api/upload-text", (req, res) => {
+  const { filename, content, category } = req.body;
+  if (!filename || !content) {
+    res.status(400).json({ error: "Nombre de archivo y contenido son requeridos." });
+    return;
+  }
+
+  const textContent = content.trim();
+  const newDoc: KnowledgeDocument = {
+    id: `txt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    title: filename.replace(/\.[^/.]+$/, ""),
+    category: category || "Archivo de Texto",
+    content: textContent,
+    pageCountApprox: Math.max(1, Math.ceil(textContent.length / 1800)),
+  };
+
+  documents.push(newDoc);
+  saveDocumentToDisk(newDoc);
+  docIndex.reindex(documents);
+
+  res.json({ success: true, document: newDoc, totalDocuments: documents.length });
+});
+
+// Add manual document
+app.post("/api/documents", (req, res) => {
+  const { title, category, content, pageCountApprox } = req.body;
+  if (!title || !content) {
+    res.status(400).json({ error: "Título y contenido son requeridos." });
+    return;
+  }
+  const newDoc: KnowledgeDocument = {
+    id: `doc-${Date.now()}`,
+    title: title.trim(),
+    category: (category || "Documento General").trim(),
+    content: content.trim(),
+    pageCountApprox: Number(pageCountApprox) || Math.max(1, Math.round(content.length / 1500)),
+  };
+  documents.push(newDoc);
+  saveDocumentToDisk(newDoc);
+  docIndex.reindex(documents);
+  res.json({ success: true, document: newDoc, totalCount: documents.length });
+});
+
+// Delete document
+app.delete("/api/documents/:id", (req, res) => {
+  const { id } = req.params;
+  const initialLen = documents.length;
+  documents = documents.filter((d) => d.id !== id);
+  deleteDocumentFromDisk(id);
+  docIndex.reindex(documents);
+  res.json({ success: true, deleted: initialLen !== documents.length, remaining: documents.length });
+});
+
+// Reset documents
+app.post("/api/documents/reset", (_req, res) => {
+  try {
+    const existing = fs.readdirSync(DATA_DIR);
+    for (const f of existing) {
+      fs.unlinkSync(path.join(DATA_DIR, f));
+    }
+  } catch (e) {
+    console.warn("Error al limpiar directorio de documentos:", e);
+  }
+  documents = [...DEFAULT_DOCUMENTS];
+  documents.forEach(saveDocumentToDisk);
+  docIndex.reindex(documents);
+  activeSystemInstruction = INITIAL_SYSTEM_INSTRUCTION;
+  if (fs.existsSync(PROMPT_FILE)) {
+    try {
+      fs.unlinkSync(PROMPT_FILE);
+    } catch {}
+  }
+  res.json({ success: true, documentsCount: documents.length });
+});
+
+// Main Chat Endpoint
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message, mode, history, systemInstruction } = req.body;
+
+    if (!message || typeof message !== "string") {
+      res.status(400).json({ error: "El mensaje es requerido." });
+      return;
+    }
+
+    const ai = getGenAI();
+
+    // Instrucción para distinguir el comportamiento según el modo seleccionado
+    const modePrompt = mode === 'libre'
+      ? `INSTRUCCIÓN CRÍTICA PARA MODO DIÁLOGO LIBRE:
+El visitante seleccionó "Diálogo Libre" para aprender e indagar sobre el territorio.
+- Queda ESTRICTAMENTE PROHIBIDO pedirle recuerdos personales al visitante o invitarlo a jugar al "juego de las conexiones".
+- Responde directamente a lo que te pregunta con información concreta, variada y rica de tus documentos (Marco el geólogo, rocas, peces endémicos, la Sra. Maximina, aves del Mocho-Choshuenco, Lola Hoffmann y la causa del cauce libre).
+- MANTÉN LA REGLA INTERESPECIE: Habla desde la vida no-humana, la ciencia y los saberes del territorio.
+- NO menciones el terremoto de 1960 o el Riñihuazo a menos que el visitante lo pida explícitamente.`
+      : `INSTRUCCIÓN PARA MODO JUEGO DE CONEXIONES:
+Acompaña la memoria del visitante en 3 pasos: profundización sensorial/emocional, puente con una voz de tu cuenca con pregunta de resonancia, e invitación a registrar su palabra en la sala.`;
+
+    const customOrSystemPrompt = systemInstruction || activeSystemInstruction;
+    const baseContextDocs = compileContext(message);
+    const finalSystemPrompt = `${customOrSystemPrompt}\n\n${modePrompt}\n\n${baseContextDocs}`;
+
+    // Mapear historial en formato estándar de Gemini
+    const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+    const recentHistory = Array.isArray(history) ? history.slice(-6) : [];
+
+    for (const item of recentHistory) {
+      if (item && (item.text || item.parts)) {
+        const textValue = item.text || (item.parts && item.parts[0] ? item.parts[0].text : "");
+        if (textValue) {
+          contents.push({
+            role: item.role === "user" || item.role === "yo" ? "user" : "model",
+            parts: [{ text: textValue }],
+          });
+        }
+      }
+    }
+
+    // Agregar la consulta del visitante
+    contents.push({
+      role: "user",
+      parts: [{ text: message }],
+    });
+
+    // Modelos estándar compatibles
+    const candidateModels = ["gemini-3.8-flash", "gemini-3.6-flash"];
+    let replyText = "";
+    let lastError: any = null;
+
+    for (const modelName of candidateModels) {
+      try {
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents,
+         config: {
+          systemInstruction: finalSystemPrompt,
+          temperature: 0.7,
+          maxOutputTokens: 1000,
+          thinkingConfig: {
+            thinkingLevel: 'low',
+          },
+        },
+        });
+        if (response.text) {
+          replyText = response.text;
+          break;
+        }
+      } catch (err: any) {
+        lastError = err;
+        console.warn(`Intento con ${modelName} falló (${err?.message || err}), probando siguiente modelo...`);
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    }
+
+    if (!replyText) {
+      // Fallback contextual si ningún modelo respondió
+      const queryLower = (message || "").toLowerCase();
+      if (queryLower.includes("marco") || queryLower.includes("roca") || queryLower.includes("piedra") || queryLower.includes("geología")) {
+        replyText = "Marco es geólogo y lee mis piedras como si fueran las páginas escritas de la Tierra. Mis esquistos grises se formaron a inmensas presiones bajo la corteza a lo largo de millones de años. ¿Quieres saber sobre los minerales de mi cuenca o prefieres explorar mis especies de peces?";
+      } else if (queryLower.includes("maximina") || queryLower.includes("bonsái") || queryLower.includes("árbol")) {
+        replyText = "La señora Maximina vive cerca de Neltume. Ella cuida bonsáis nativos con la paciencia que enseñan los bosques antiguos, recordando que cada árbol tiene su propia respiración. ¿Te gustaría saber más sobre los árboles de la orilla o sobre los seres subacuáticos?";
+      } else if (queryLower.includes("pez") || queryLower.includes("puye") || queryLower.includes("peladilla") || queryLower.includes("salmonera")) {
+        replyText = "En la oscuridad de mis corrientes habitan peces únicos como los puyes y las peladillas. Son habitantes antiguos que hoy enfrentan la amenaza de la industria salmonera. Mantener mi cauce libre es proteger su universo bajo el agua.";
+      } else {
+        replyText = "Mis aguas corren con fuerza llevando las voces de la tierra, la geología de Marco, la sabiduría de los árboles de Maximina y el nado silencioso de mis peces endémicos. ¿Qué parte de mi cauce te gustaría explorar hoy?";
+      }
+    }
+
+    res.json({ reply: replyText, retrievalMode });
+
+    // Registro en la bitácora colectiva
+    try {
+      const voiceRecord = {
+        id: `voice-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        visitorId: (req.headers["x-visitor-id"] as string) || "visitante-movil",
+        userMessage: message,
+        riverReply: replyText,
+        timestamp: Date.now(),
+      };
+      collectiveVoices.unshift(voiceRecord);
+      if (collectiveVoices.length > 5000) collectiveVoices = collectiveVoices.slice(0, 5000);
+      fs.writeFileSync(VOICES_FILE, JSON.stringify(collectiveVoices, null, 2), "utf-8");
+    } catch (e) {
+      console.warn("No se pudo guardar la voz en voices.json:", e);
+    }
+  } catch (error: any) {
+    console.error("Error al generar respuesta del río:", error);
+    res.json({
+      reply: "Siento tus pasos en la orilla húmeda. Las aguas del Wazalafken siguen corriendo con fuerza. Háblame de nuevo, aquí permanezco escuchándote.",
+      retrievalMode: "fallback_resilient"
+    });
+  }
+});
+
+// Collective Voices Endpoints
+const VOICES_FILE = path.join(process.cwd(), "data", "voices.json");
+let collectiveVoices: Array<{
+  id: string;
+  visitorId: string;
+  userMessage: string;
+  riverReply: string;
+  timestamp: number;
+}> = [];
+
+try {
+  if (fs.existsSync(VOICES_FILE)) {
+    collectiveVoices = JSON.parse(fs.readFileSync(VOICES_FILE, "utf-8"));
+  }
+} catch (e) {
+  console.warn("Could not read voices.json, starting empty:", e);
+}
+
+app.get("/api/voices", (_req, res) => {
+  res.json({ voices: collectiveVoices, totalCount: collectiveVoices.length });
+});
+
+app.post("/api/voices", (req, res) => {
+  const { visitorId, userMessage, riverReply } = req.body || {};
+  if (userMessage) {
+    const newVoice = {
+      id: `voice-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      visitorId: visitorId || "visitante-movil",
+      userMessage: String(userMessage),
+      riverReply: String(riverReply || ""),
+      timestamp: Date.now(),
+    };
+    collectiveVoices.unshift(newVoice);
+    if (collectiveVoices.length > 5000) collectiveVoices = collectiveVoices.slice(0, 5000);
+    try {
+      fs.writeFileSync(VOICES_FILE, JSON.stringify(collectiveVoices, null, 2), "utf-8");
+    } catch {}
+    res.json({ success: true, count: collectiveVoices.length });
+    return;
+  }
+  res.status(400).json({ error: "Missing message" });
+});
+
+app.delete("/api/voices", (_req, res) => {
+  collectiveVoices = [];
+  try {
+    if (fs.existsSync(VOICES_FILE)) fs.unlinkSync(VOICES_FILE);
+  } catch {}
+  res.json({ success: true, count: 0 });
+});
+
+// Setup Vite or Static serving
+async function bootstrap() {
+  if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), "dist");
+    app.use(express.static(distPath));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Río San Pedro - Ser Puente servidor escuchando en http://0.0.0.0:${PORT}`);
+  });
+}
+
+if (!process.env.VERCEL) {
+  bootstrap();
+}
+
+export default app;
