@@ -304,6 +304,9 @@ const curatorModal = document.getElementById('curatorModal'), aboutModal = docum
 const voicesLogContainer = document.getElementById('voicesLogContainer');
 
 let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
+let conversacionId = null, ultimaActividad = 0;
+const PAUSA_NUEVA_CONVERSACION = 10 * 60 * 1000; // 10 min sin escribir = otra conversación
+function nuevaConversacion(){ conversacionId = 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 function add(who, text){
   const el = document.createElement('div');
@@ -325,6 +328,8 @@ function typing(on){
 }
 
 async function consultarGeminiDirecto(mensajeUsuario) {
+  if (!conversacionId || (ultimaActividad && Date.now() - ultimaActividad > PAUSA_NUEVA_CONVERSACION)) { nuevaConversacion(); }
+  ultimaActividad = Date.now();
   try {
     const historyPayload = history.map(h => ({
       role: h.role === 'user' ? 'user' : 'model',
@@ -334,7 +339,7 @@ async function consultarGeminiDirecto(mensajeUsuario) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ message: mensajeUsuario, history: historyPayload, mode: modo })
+      body: JSON.stringify({ message: mensajeUsuario, history: historyPayload, mode: modo, conversationId: conversacionId })
     });
 
     if (!res.ok) throw new Error('Respuesta no válida del servidor');
@@ -374,7 +379,7 @@ async function enviar(texto){
 }
 
 function entrar(m, primerTexto){
-  modo = m; history = []; thread.innerHTML = '';
+  modo = m; history = []; thread.innerHTML = ''; nuevaConversacion(); ultimaActividad = Date.now();
   document.getElementById('modeLabel').textContent = m === 'guiado' ? 'PASO A PASO / EL JUEGO DE LAS CONEXIONES' : 'DIÁLOGO LIBRE';
   const saludoInicial = m === 'guiado'
     ? 'Soy el río San Pedro, Wazalafken. Llevo dentro muchas voces reales de personas que conocí en mi cuenca. El juego funciona así: tú me cuentas una memoria, historia, recuerdo o sueño que tengas con un río, un mar, un lago o cualquier cuerpo de agua —no tiene que ser conmigo—, y yo la conectaré con una de esas voces. Al final, encontraremos juntos qué une a ambas historias, para que dejes una huella en la sala. ¿Qué recuerdo o momento con el agua te gustaría compartir?'
@@ -398,6 +403,30 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+function formatoFechaHora(ts){
+  if (!ts) return 'SIN FECHA';
+  return new Date(ts).toLocaleString('es-CL', { timeZone:'America/Santiago', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false });
+}
+function formatoHora(ts){
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('es-CL', { timeZone:'America/Santiago', hour:'2-digit', minute:'2-digit', hour12:false });
+}
+function etiquetaModo(m){ return m === 'guiado' ? 'PASO A PASO' : m === 'libre' ? 'DIÁLOGO LIBRE' : 'CONVERSACIÓN'; }
+
+// Agrupa los intercambios por conversación: la más reciente primero, y dentro de cada una en orden cronológico.
+function agruparConversaciones(voces){
+  const mapa = new Map();
+  voces.forEach(v => {
+    const clave = v.conversationId || v.id; // registros antiguos (sin id de conversación) quedan sueltos
+    if (!mapa.has(clave)) mapa.set(clave, { mensajes: [], modo: v.mode });
+    mapa.get(clave).mensajes.push(v);
+  });
+  const grupos = [...mapa.values()];
+  grupos.forEach(g => { g.mensajes.sort((a, b) => a.timestamp - b.timestamp); g.inicio = g.mensajes[0].timestamp; });
+  grupos.sort((a, b) => b.inicio - a.inicio);
+  return grupos;
+}
+
 let claveCurador = null;
 
 async function cargarBitacoraVoces(){
@@ -418,10 +447,17 @@ async function cargarBitacoraVoces(){
       voicesLogContainer.innerHTML = 'AÚN NO HAY CONVERSACIONES REGISTRADAS.';
       return;
     }
-    voicesLogContainer.innerHTML = voces.map(v =>
-      `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(43,60,219,.2);">
-        <strong>VISITANTE:</strong> ${escapeHtml(v.userMessage)}<br>
-        <strong>RÍO:</strong> ${escapeHtml(v.riverReply)}
+    const grupos = agruparConversaciones(voces);
+    voicesLogContainer.innerHTML = grupos.map(g =>
+      `<div style="margin-bottom:22px;">
+        <div style="font-weight:600; letter-spacing:.12em; border-bottom:1px solid var(--rule); padding-bottom:6px; margin-bottom:10px;">
+          ${escapeHtml(formatoFechaHora(g.inicio))} — ${escapeHtml(etiquetaModo(g.modo))} — ${g.mensajes.length} ${g.mensajes.length === 1 ? 'INTERCAMBIO' : 'INTERCAMBIOS'}
+        </div>
+        ${g.mensajes.map(v => `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(43,60,219,.2);">
+          <span style="opacity:.6;">${escapeHtml(formatoHora(v.timestamp))}</span><br>
+          <strong>VISITANTE:</strong> ${escapeHtml(v.userMessage)}<br>
+          <strong>RÍO:</strong> ${escapeHtml(v.riverReply)}
+        </div>`).join('')}
       </div>`
     ).join('');
   } catch (e) {
@@ -436,14 +472,16 @@ document.getElementById('exportVoicesBtn').addEventListener('click', async () =>
     if (res.status === 401) { alert('Clave incorrecta.'); claveCurador = null; return; }
     const data = await res.json();
     const voces = data.voices || [];
-    let csv = 'timestamp,visitante,rio\n';
-    voces.forEach(v => {
-      const t = (v.timestamp || '').toString().replace(/"/g, '""');
-      const u = (v.userMessage || '').replace(/"/g, '""');
-      const r = (v.riverReply || '').replace(/"/g, '""');
-      csv += `"${t}","${u}","${r}"\n`;
+    const q = t => '"' + String(t == null ? '' : t).replace(/"/g, '""') + '"';
+    let csv = '\ufeffconversacion,fecha,hora,modo,visitante,rio\n';
+    agruparConversaciones(voces).forEach((g, i) => {
+      g.mensajes.forEach(v => {
+        const d = v.timestamp ? new Date(v.timestamp) : null;
+        const fecha = d ? d.toLocaleDateString('es-CL', { timeZone:'America/Santiago', day:'2-digit', month:'2-digit', year:'numeric' }) : '';
+        csv += [q(v.conversationId || v.id), q(fecha), q(formatoHora(v.timestamp)), q(etiquetaModo(v.mode)), q(v.userMessage), q(v.riverReply)].join(',') + '\n';
+      });
     });
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'voces-ser-puente.csv';
