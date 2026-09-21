@@ -135,7 +135,6 @@
 
       <div class="pad" style="border-bottom:1px solid var(--rule);">
         <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
-        <p style="margin:12px 0 0; font-size:8px; letter-spacing:.1em; opacity:.6; text-transform:uppercase;">Lo que converses aquí se suma al archivo de voces de esta obra — no es una conversación privada.</p>
       </div>
     </div>
 
@@ -155,6 +154,7 @@
       <input id="field" type="text" placeholder="HABLA CON EL RÍO SAN PEDRO…" aria-label="Habla con el río San Pedro">
       <button type="submit" id="sendBtn">ENVIAR</button>
     </form>
+    <p id="chatDisclaimer" hidden style="text-align:left; margin:6px 2px 0; font-size:8px; letter-spacing:.08em; opacity:.55; text-transform:uppercase;">Lo que converses aquí se suma al archivo de voces de esta obra — no es una conversación privada.</p>
   </div>
 </div>
 
@@ -166,6 +166,8 @@
       <button type="button" class="ghost" id="closeAboutBtn" style="padding:4px 10px;">✕ CERRAR</button>
     </div>
     <div style="font-size:10px; line-height:2; text-transform:uppercase; overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
+      <img src="/img_8644.jpg" alt="Registro de cámara oscura, río San Pedro" style="width:100%; height:auto; border:1px solid var(--rule);">
+
       <p><strong>SER PUENTE</strong> (2026), de la artista multimedial <strong>MARÍA HURTADO IZQUIERDO</strong>, es una obra realizada en el marco de la Residencia Cuencas 2025, desarrollada en la Región de Los Ríos, Chile, siguiendo el recorrido de la cuenca del río Valdivia desde la cordillera hasta el mar. La obra investiga la noción de escucha y busca aproximarse a las posibles voces del río, entendiendo el territorio como un entramado de memorias humanas y no humanas.</p>
 
       <p style="font-weight:600; letter-spacing:.06em;">"Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red."</p>
@@ -191,8 +193,6 @@
           MATERIALES: CÁMARA OSCURA ESTENOPEICA, REGISTROS FOTOGRÁFICOS Y DE VIDEO, 38 ENTREVISTAS SONORAS, CHAT CONVERSACIONAL
         </p>
       </div>
-
-      <img src="/img_8644.jpg" alt="Registro de cámara oscura, río San Pedro" style="width:100%; height:auto; border:1px solid var(--rule); margin-top:4px;">
 
       <div style="border-top:1px solid var(--rule); margin-top:8px; padding-top:16px;">
         <p style="font-weight:600;">MÁS SOBRE LA ARTISTA</p>
@@ -238,11 +238,22 @@
 
 <script type="module">
 const SUGERENCIAS = {
-  guiado: [["UN RECUERDO DE LLUVIA","Recuerdo la lluvia golpeando el techo de zinc de mi abuela."],
-           ["UN CRUCE EN BOTE","Crucé el río en bote una vez, siendo niña."]],
+  guiado: [["RECUERDO","Recuerdo que "],["SUEÑO","Soñé que "],["HISTORIA","Una vez "]],
   libre:  [["PECES ENDÉMICOS","Háblame de los peces únicos que habitan tus aguas subacuáticas."],
            ["LAS ROCAS Y LA TIERRA","¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"]]
 };
+
+const OPCIONES_PAPEL = [["CONCEPTO","Voy a dejar un concepto o palabra en el papel."],["DIBUJO","Voy a dejar un dibujo en el papel."],["FRASE","Voy a dejar una frase en el papel."]];
+
+function pintarBotonesPrellenar(lista){
+  suggest.innerHTML = '';
+  lista.forEach(([label, textoPrevio]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
+    b.onclick = () => { field.value = textoPrevio; field.focus(); };
+    suggest.appendChild(b);
+  });
+}
 
 const TEMAS_LIBRES = [
   ["PECES ENDÉMICOS", "Háblame de los peces únicos que habitan tus aguas."],
@@ -298,6 +309,7 @@ const home = document.getElementById('home'), chat = document.getElementById('ch
 const thread = document.getElementById('thread'), suggest = document.getElementById('suggest');
 const field = document.getElementById('field'), composer = document.getElementById('composer');
 const curatorModal = document.getElementById('curatorModal'), aboutModal = document.getElementById('aboutModal');
+const voicesLogContainer = document.getElementById('voicesLogContainer');
 const promptInput = document.getElementById('promptInput');
 
 let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
@@ -363,25 +375,6 @@ async function consultarGeminiDirecto(mensajeUsuario) {
   }
 }
 
-const VOCES_CONOCIDAS = ["Marco", "Maximina", "Rodolfo", "Valesca", "Juan Francisco", "Mane Torres"];
-
-function mostrarSugerenciasFinales(respuesta){
-  suggest.innerHTML = '';
-  const nombresEncontrados = VOCES_CONOCIDAS.filter(n => respuesta.includes(n));
-  nombresEncontrados.slice(0, 2).forEach(nombre => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'ghost';
-    b.textContent = 'MÁS DE ' + nombre.toUpperCase();
-    b.onclick = () => enviar(`Cuéntame más de ${nombre}`);
-    suggest.appendChild(b);
-  });
-  const otro = document.createElement('button');
-  otro.type = 'button'; otro.className = 'ghost';
-  otro.textContent = 'CONTAR OTRO RECUERDO';
-  otro.onclick = () => entrar('guiado');
-  suggest.appendChild(otro);
-}
-
 async function enviar(texto){
   const t = (texto || field.value || '').trim(); 
   if (!t) return;
@@ -397,8 +390,8 @@ async function enviar(texto){
     // En diálogo libre, los botones van cambiando según de qué se habló
     pintarBotones(elegirTemasRelacionados(respuesta, 2));
   } else if (respuesta.includes('dejamos de percibirnos como individuos aislados')) {
-    // En el juego, solo se muestran sugerencias nuevas al cerrar
-    mostrarSugerenciasFinales(respuesta);
+    // Al cerrar el juego, se ofrecen las 3 formas de dejar huella en el papel
+    pintarBotones(OPCIONES_PAPEL);
   }
 }
 
@@ -410,13 +403,89 @@ function entrar(m, primerTexto){
     : 'Hola, soy el río San Pedro o Wazalafken. Por mis aguas corren historias, memoria y vidas. ¿Qué te gustaría conversar hoy?';
     
   add('rio', saludoInicial);
-  const temasIniciales = m === 'guiado' ? SUGERENCIAS.guiado : elegirTemasAleatorios(2);
-  pintarBotones(temasIniciales);
+  if (m === 'guiado') {
+    pintarBotonesPrellenar(SUGERENCIAS.guiado);
+  } else {
+    pintarBotones(elegirTemasAleatorios(2));
+  }
 
   home.style.display = 'none'; home.setAttribute('hidden', '');
   chat.removeAttribute('hidden'); chat.style.display = 'flex';
+  document.getElementById('chatDisclaimer').removeAttribute('hidden');
   if (primerTexto) enviar(primerTexto);
 }
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.setAttribute('hidden', ''));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).removeAttribute('hidden');
+    if (btn.dataset.tab === 'tab-voices') cargarBitacoraVoces();
+  });
+});
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+let claveCurador = null;
+
+async function cargarBitacoraVoces(){
+  voicesLogContainer.innerHTML = 'CARGANDO…';
+  if (!claveCurador) {
+    claveCurador = prompt('Clave de curaduría:') || '';
+  }
+  try {
+    const res = await fetch('/api/voices?key=' + encodeURIComponent(claveCurador));
+    if (res.status === 401) {
+      voicesLogContainer.innerHTML = 'CLAVE INCORRECTA.';
+      claveCurador = null;
+      return;
+    }
+    const data = await res.json();
+    const voces = data.voices || [];
+    if (voces.length === 0) {
+      voicesLogContainer.innerHTML = 'AÚN NO HAY CONVERSACIONES REGISTRADAS.';
+      return;
+    }
+    voicesLogContainer.innerHTML = voces.map(v =>
+      `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(43,60,219,.2);">
+        <strong>VISITANTE:</strong> ${escapeHtml(v.userMessage)}<br>
+        <strong>RÍO:</strong> ${escapeHtml(v.riverReply)}
+      </div>`
+    ).join('');
+  } catch (e) {
+    voicesLogContainer.innerHTML = 'NO SE PUDO CARGAR LA BITÁCORA.';
+  }
+}
+
+document.getElementById('exportVoicesBtn').addEventListener('click', async () => {
+  if (!claveCurador) claveCurador = prompt('Clave de curaduría:') || '';
+  try {
+    const res = await fetch('/api/voices?key=' + encodeURIComponent(claveCurador));
+    if (res.status === 401) { alert('Clave incorrecta.'); claveCurador = null; return; }
+    const data = await res.json();
+    const voces = data.voices || [];
+    let csv = 'timestamp,visitante,rio\n';
+    voces.forEach(v => {
+      const t = (v.timestamp || '').toString().replace(/"/g, '""');
+      const u = (v.userMessage || '').replace(/"/g, '""');
+      const r = (v.riverReply || '').replace(/"/g, '""');
+      csv += `"${t}","${u}","${r}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'voces-ser-puente.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('No se pudo exportar la bitácora.');
+  }
+});
 
 document.querySelectorAll('.secret-trigger').forEach(trigger => {
   trigger.addEventListener('click', () => {
@@ -442,7 +511,7 @@ document.getElementById('closeCuratorBtn').addEventListener('click', () => curat
 
 composer.addEventListener('submit', (e) => { e.preventDefault(); enviar(field.value); });
 document.querySelectorAll('.cell').forEach(c => c.addEventListener('click', () => entrar(c.dataset.mode)));
-document.getElementById('back').addEventListener('click', () => { chat.style.display = 'none'; chat.setAttribute('hidden', ''); home.removeAttribute('hidden'); home.style.display = 'flex'; });
+document.getElementById('back').addEventListener('click', () => { chat.style.display = 'none'; chat.setAttribute('hidden', ''); home.removeAttribute('hidden'); home.style.display = 'flex'; document.getElementById('chatDisclaimer').setAttribute('hidden', ''); });
 </script>
 </body>
 </html>
