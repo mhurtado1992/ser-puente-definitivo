@@ -79,24 +79,101 @@ sustancia, siguiendo las reglas generales de abajo.
 
 export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
   {
-    id: "doc-1",
-    title: "Memoria del Wazalafken y el Riñihuazo",
+    id: "doc-riñihuazo",
+    title: "El Riñihuazo (1960)",
     category: "Historia y Memoria",
-    pageCountApprox: 120,
-    content: `El río San Pedro (Wazalafken) nace como desagüe natural del lago Riñihue y es el principal tributario de la cuenca del río Valdivia. En 1960, tras el gran terremoto de Valdivia, tres derrumbes o 'tacos' cerraron la salida del lago amenazando con arrasar los poblados río abajo. La hazaña solidaria del 'Riñihuazo', comandada por paleadores, obreros y el ingeniero Raúl Sáez, logró desahogar el agua paleando día y noche contra el barro. Esta gesta humana y telúrica marcó para siempre la memoria y el respeto por el poder y la vida del río.`
+    pageCountApprox: 10,
+    content: `Tras el gran terremoto de Valdivia de 1960 (el más potente jamás registrado en el mundo), desprendimientos de tierra formaron tres represamientos naturales llamados "Taco 1, 2 y 3" en la salida del lago Riñihue, bloqueando el cauce del río San Pedro. El lago comenzó a crecer y amenazaba con inundar y arrasar Valdivia y los poblados río abajo si colapsaba de golpe. La población, junto al ingeniero Raúl Sáez, trabajó de forma mancomunada abriendo desagües a pala, día y noche, para liberar el agua de forma controlada y evitar la catástrofe. Este episodio se conoció como el "Riñihuazo". Ya existía un antecedente similar en 1575, tras otro terremoto.`
   },
   {
-    id: "doc-2",
-    title: "Voces de la Cuenca y Territorio Ancestral",
-    category: "Entrevistas y Testimonios",
-    pageCountApprox: 180,
-    content: `Testimonios de las comunidades ribereñas, boteros de Los Lagos, pescadores artesanales y familias del territorio. Relatan cómo el río regula el clima del valle, alimenta la biodiversidad de la selva valdiviana, las aves de los humedales y los peces nativos como el puye y el tollo. Para el pueblo mapuche-huilliche, el río no es un recurso hídrico inerte sino un Ngenko (fuerza y espíritu tutelar del agua), donde cada meandro y cada poza profunda tiene su guardián espiritual y requiere reverencia.`
+    id: "doc-marco-valle",
+    title: "Marco Valle — geólogo",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Marco Valle es geólogo. Lee las rocas del río como si fueran un libro enterrado: cada capa le cuenta dónde estuvo, a qué temperatura y presión se formó. Por ejemplo, los esquistos grises de la costa de Valdivia alguna vez fueron playas que, enterradas bajo presión y calor durante millones de años, se transformaron en piedra. Así reconstruye la historia geológica del territorio, capa por capa.`
   },
   {
-    id: "doc-3",
-    title: "Defensa del Río Libre y Patrimonio Vivo",
-    category: "Investigación y Ecología",
-    pageCountApprox: 200,
-    content: `Investigaciones ecológicas y ciudadanas sobre el río San Pedro como río salvaje y corredor biológico irreemplazable de la ecorregión valdiviana. La cuenca ha sido objeto de una resistencia social y comunitaria de más de 15 años frente a proyectos de centrales hidroeléctricas que pretendían inundar los rápidos y cañones de roca. Los testimonios dan cuenta de la convicción compartida: 'El río San Pedro debe correr libre'. La belleza escénica, el kayakismo, las investigaciones científicas de macroinvertebrados y la memoria colectiva sostienen su declaración como patrimonio de la naturaleza.`
+    id: "doc-maximina",
+    title: "Maximina Queumir — bonsáis y saberes ancestrales",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Maximina del Carmen Queumir Reina es una mujer mapuche de Neltume, de la comunidad Cachim. Vivió años fuera de su comunidad y de Chile, y volvió tras la pandemia cuando nació su nieto. Ahora cultiva de todo — verduras, flores, bonsáis — habiendo aprendido la técnica del bonsái con maestros asiáticos durante sus años fuera, y la tradujo después a especies nativas de su tierra. Dice que trabajar con las plantas es "regaloneo propio". Tiene una cascada cerca de su casa que le encanta subir y bajar. Recibe visitantes, les muestra el territorio y comparte generosamente su conocimiento. Encarna una forma de habitar el territorio que no es ni totalmente ancestral ni totalmente moderna — es ambas cosas a la vez.`
+  },
+  {
+    id: "doc-rodolfo",
+    title: "Rodolfo Hernández — capitán de la barcaza",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Rodolfo Hernández es capitán de la barcaza en el lago Pirihueico. Antes de volver a este territorio, navegó años en barcos grandes por otros mares. Ahora cruza gente todos los días de una orilla a otra, en el mismo lago, y dice que después de ver tanto mundo aprendió que las conversaciones más importantes casi nunca llevan palabras — van en el ritmo del motor, en mirar el agua junto a alguien en silencio.`
+  },
+  {
+    id: "doc-valesca",
+    title: "Valesca Bravo — Isla Mancera",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Valesca Bravo habita la Isla Mancera y está encargada del fuerte histórico del lugar. Guarda la memoria de las familias que han habitado ese territorio a lo largo de generaciones, y su relación cotidiana con la historia colonial y militar de la isla, en la desembocadura del río.`
+  },
+  {
+    id: "doc-juan-francisco",
+    title: "Juan Francisco Vidalo — memoria de Isla Mancera",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Juan Francisco Vidalo es autor de libros artesanales y guía turístico en Isla Mancera. Recupera la memoria de la isla a través de la fotografía y la narrativa, documentando su historia para quienes la visitan.`
+  },
+  {
+    id: "doc-guia-mocho",
+    title: "La guía del Mocho Choshuenco — aves y bosques",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Una guía autodidacta experta en aves trabaja en el sector del volcán Mocho Choshuenco. Enseña a quienes la visitan a escuchar los bosques: a distinguir los cantos, identificar especies y prestar atención al ecosistema sonoro de la selva valdiviana.`
+  },
+  {
+    id: "doc-mane-torres",
+    title: "Mane Torres — colectivo de mujeres de Panguipulli",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `Mane Torres forma parte de un colectivo de mujeres voluntarias de Panguipulli que cuida el territorio desde lo cotidiano — un trabajo comunitario sostenido de cuidado del entorno y de la vida en la cuenca.`
+  },
+  {
+    id: "doc-nombres-rio",
+    title: "Los nombres del río: Wazalafken, San Pedro, Calle-Calle, Valdivia",
+    category: "Geografía y territorio",
+    pageCountApprox: 8,
+    content: `El río nace en el lago Lácar (Argentina) como río Hua-Hum, cruza a Chile y pasa por una cadena de lagos (Pirihueico, Pellaifa, Calafquén, Pullinque, Neltume, Panguipulli, Riñihue). En el desagüe del lago Riñihue toma el nombre de río San Pedro, también llamado Wazalafken en mapudungún — nombre que las comunidades y organizaciones que lo defienden prefieren usar como acto de nombrar desde el territorio, no desde la colonia. Recibe los ríos Malihue y Collileufu, y al unirse con el río Quinchilca nace el río Calle-Calle (del mapudungún kallekalle). Al encontrarse con el río Cruces frente a Valdivia, toma finalmente el nombre de río Valdivia, nombre impuesto en 1544 por el navegante Juan Bautista Pastene. Termina en el océano Pacífico, en la bahía de Corral.`
+  },
+  {
+    id: "doc-cosmovision",
+    title: "Cosmovisión mapuche: el ngen-ko y el territorio huilliche",
+    category: "Cosmovisión",
+    pageCountApprox: 8,
+    content: `En mapudungún, "ko" significa agua. Para la cosmovisión mapuche, el agua no es un recurso sino un elemento vivo y sagrado. Los cuerpos de agua tienen un ngen o ngen-ko: un espíritu guardián que los cuida y regula su flujo. Existían protocolos de respeto para relacionarse con el agua, como pedir permiso antes de cruzar un curso de agua. El territorio del río San Pedro es territorio huilliche ("gente del sur"), distinto del territorio pehuenche de la cordillera más al norte. Dentro de esta identidad huilliche existe además una fuerte tradición de navegación fluvial y lacustre en canoas (wampo), y memoria de los "balseros del San Pedro".`
+  },
+  {
+    id: "doc-biodiversidad",
+    title: "Biodiversidad única del río San Pedro",
+    category: "Ciencia",
+    pageCountApprox: 8,
+    content: `El río San Pedro es el río con mayor diversidad de peces nativos de Chile, con especies microendémicas que no existen en ningún otro lugar del mundo: el "tollo" o "toyo de agua dulce" (Diplomystes camposensis), en peligro de extinción, y la "pocha" (Cheirodon kiliani). También es hábitat del huillín (Lontra provocax), una nutria de río en peligro de extinción. Funciona como corredor biológico entre la cordillera y el mar, y provee agua potable a gran parte de la población de la región, sobre todo en verano.`
+  },
+  {
+    id: "doc-salmonera",
+    title: "El movimiento Río San Pedro sin Salmoneras",
+    category: "Activismo",
+    pageCountApprox: 10,
+    content: `Un proyecto de piscicultura de Salmones Antártica S.A. fue aprobado ambientalmente en 2008 bajo normativa hoy obsoleta, y retomó obras en enero de 2025, despertando la reacción del Movimiento Ciudadano "Río San Pedro sin Salmoneras" (nacido en noviembre de 2024). El proyecto captaría 15 m³/s de agua, devolviéndola con residuos de antibióticos y alimento. En mayo de 2025 se descubrieron fósiles de hasta 39 millones de años durante las obras, suspendiéndolas por riesgo al patrimonio paleontológico; en ese contexto, un integrante de la Comunidad Mapuche Saturnino Leal Neiman se manifestó con una bandera mapuche en el lugar. A fines de octubre de 2025, el Tercer Tribunal Ambiental de Valdivia suspendió la autorización ambiental del proyecto por obsoleto y riesgoso. El 7 de febrero de 2026 se realizó una "flotada fluvial" con más de 100 embarcaciones en Valdivia en apoyo a la causa.`
+  },
+  {
+    id: "doc-fosiles",
+    title: "Los fósiles del río San Pedro (Estratos de San Pedro)",
+    category: "Ciencia",
+    pageCountApprox: 8,
+    content: `En las riberas del río San Pedro, sector de Malihue, existen yacimientos de flora fosilizada de más de 20 millones de años conocidos como los "Estratos de San Pedro": hojas, madera y semillas de bosques anteriores a la llegada del ser humano. Fueron dados a conocer a la comunidad científica desde 2016 por Herman Peña Riquelme, agricultor y ganadero de la comuna de Los Lagos, quien observaba estas "hojas petrificadas" desde su infancia.`
+  },
+  {
+    id: "doc-geologia",
+    title: "La falla Llecué y las zonas de fragilidad geológica",
+    category: "Ciencia",
+    pageCountApprox: 6,
+    content: `El cauce del río San Pedro está cruzado por la falla Llecué, una estructura tectónica activa de 17 km que ha determinado su morfología, generando los rápidos naturales del río. Esta falla es una zona de fragilidad geológica: roca fracturada y debilitada, más permeable, por donde históricamente han circulado fluidos y se han concentrado deslizamientos sísmicos (como los del Riñihuazo de 1960 y uno anterior en 1575).`
   }
 ];
