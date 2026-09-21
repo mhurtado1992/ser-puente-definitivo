@@ -18,7 +18,7 @@ const currentFilePath = typeof __filename !== 'undefined' ? __filename : process
 const currentDirPath = path.dirname(currentFilePath);
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // High limit to support uploading 500 pages of PDFs / Word
 app.use(express.json({ limit: "60mb" }));
