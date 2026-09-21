@@ -552,7 +552,7 @@ app.post("/api/documents/reset", (_req, res) => {
 // Main Chat Endpoint
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, mode, history, systemInstruction } = req.body;
+    const { message, mode, history, systemInstruction, conversationId } = req.body;
 
     if (!message || typeof message !== "string") {
       res.status(400).json({ error: "El mensaje es requerido." });
@@ -639,6 +639,8 @@ app.post("/api/chat", async (req, res) => {
       const voiceRecord = {
         id: `voice-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         visitorId: (req.headers["x-visitor-id"] as string) || "visitante-movil",
+        conversationId: typeof conversationId === "string" ? conversationId.slice(0, 60) : undefined,
+        mode: typeof mode === "string" ? mode.slice(0, 20) : undefined,
         userMessage: message,
         riverReply: replyText,
         timestamp: Date.now(),
@@ -663,6 +665,8 @@ const VOICES_FILE = process.env.VOICES_FILE || path.join(process.cwd(), "data", 
 let collectiveVoices: Array<{
   id: string;
   visitorId: string;
+  conversationId?: string;
+  mode?: string;
   userMessage: string;
   riverReply: string;
   timestamp: number;
