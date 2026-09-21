@@ -41,7 +41,7 @@
           padding:12px 20px; min-height:44px; font-size:9px; font-weight:600; letter-spacing:.2em;
           transition:background 180ms ease,color 180ms ease; }
   .cell:hover .pill, .ghost:hover { background:var(--rule); color:var(--paper); }
-  .empty { min-height:180px; border-bottom:1px solid var(--rule); }
+  .empty { min-height:180px; border-bottom:1px solid var(--rule); grid-column:1 / -1; }
   .curatorial { margin:0; font-size:10px; font-weight:300; letter-spacing:.1em; line-height:2.1; text-transform:uppercase; text-wrap:pretty; }
 
   .ghost { cursor:pointer; background:transparent; color:inherit; font:inherit; border:1px solid rgba(43,60,219,.45); border-radius:2px;
@@ -79,7 +79,7 @@
   .tab-btn.active { border-color:var(--rule); background:var(--rule); color:var(--paper); }
 
   .tab-content { flex:1; overflow-y:auto; padding-right:6px; display:flex; flex-direction:column; gap:16px; }
-  .modal-label { font-size:9px; font-weight:600; letter-spacing:.16em; margin-bottom:6px; display毛:block; }
+  .modal-label { font-size:9px; font-weight:600; letter-spacing:.16em; margin-bottom:6px; display:block; }
   .modal-textarea { width:100%; height:200px; background:transparent; border:1px solid var(--rule); color:var(--rule); font-family:inherit; font-size:10px; padding:12px; outline:none; line-height:1.8; resize:vertical; }
 
   .voice-item { border:1px solid rgba(43,60,219,.3); padding:10px; margin-bottom:8px; font-size:9px; line-height:1.6; }
@@ -110,10 +110,10 @@
       <div class="intro">
         <div class="col">
           <span class="micro b">VOCES DEL RÍO</span>
-          <span class="micro">POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE</span>
+          <span class="micro">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
         </div>
         <div class="col">
-          <span class="micro">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
+          <span class="micro">POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE</span>
         </div>
       </div>
 
@@ -134,7 +134,7 @@
       </div>
 
       <div class="pad" style="border-bottom:1px solid var(--rule);">
-        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de perceptiones como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
       </div>
     </div>
 
@@ -202,10 +202,6 @@
 </div>
 
 <script type="module">
-import { GoogleGenAI } from '@google/genai';
-
-const API_KEY = "AQ.Ab8RN6Id_J8Abd18Io3v2Ef0ihwUND_xef4cm4CaxMH6gN0L1A";
-
 const SUGERENCIAS = {
   guiado: [["UN RECUERDO DE LLUVIA","Recuerdo la lluvia golpeando el techo de zinc de mi abuela."],
            ["UN CRUCE EN BOTE","Crucé el río en bote una vez, siendo niña."]],
@@ -255,26 +251,21 @@ function typing(on){
 
 async function consultarGeminiDirecto(mensajeUsuario) {
   try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    
-    const contents = history.map(h => ({
+    const historyPayload = history.map(h => ({
       role: h.role === 'user' ? 'user' : 'model',
-      parts: [{ text: h.parts[0].text }]
+      text: h.parts[0].text
     }));
-    contents.push({ role: 'user', parts: [{ text: mensajeUsuario }] });
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: contents,
-      config: {
-        systemInstruction: promptActual,
-        temperature: 0.7,
-        maxOutputTokens: 1000
-      }
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: mensajeUsuario, history: historyPayload })
     });
 
-    const reply = response.text || "Las aguas siguen su curso en calma.";
-    
+    if (!res.ok) throw new Error('Respuesta no válida del servidor');
+    const data = await res.json();
+    const reply = data.reply || "Las aguas siguen su curso en calma.";
+
     history.push({ role: 'user', parts: [{ text: mensajeUsuario }] });
     history.push({ role: 'model', parts: [{ text: reply }] });
 
@@ -282,7 +273,7 @@ async function consultarGeminiDirecto(mensajeUsuario) {
 
     return reply;
   } catch (err) {
-    console.error("Error directo Gemini:", err);
+    console.error("Error al hablar con el servidor:", err);
     return "Ocurrió una interrupción en las aguas. Por favor presiona enviar de nuevo.";
   }
 }
