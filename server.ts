@@ -9,7 +9,7 @@ import { PDFParse } from "pdf-parse";
 import mammoth from "mammoth";
 // @ts-ignore
 import WordExtractor from "word-extractor";
-import { INITIAL_SYSTEM_INSTRUCTION, DEFAULT_DOCUMENTS, type KnowledgeDocument } from "./src/server/knowledge.ts";
+import { INITIAL_SYSTEM_INSTRUCTION, FREE_INITIAL_SYSTEM_INSTRUCTION, DEFAULT_DOCUMENTS, type KnowledgeDocument } from "./src/server/knowledge.ts";
 import { DocumentIndex } from "./src/server/retrieval.ts";
 
 dotenv.config();
@@ -124,7 +124,7 @@ function getGenAI(): GoogleGenAI {
 }
 
 // Build context dynamically based on retrieval mode
-function compileContext(userQuery?: string): string {
+function compileContext(userQuery?: string, mode?: string): string {
   let docsText = "";
 
   if (retrievalMode === "smart_rag" && docIndex.totalChunks > 0) {
@@ -143,7 +143,11 @@ function compileContext(userQuery?: string): string {
       .join("\n\n");
   }
 
-  return `${activeSystemInstruction}
+  // En modo "libre" se usa el prompt de diálogo libre (sin la estructura
+  // del juego); en cualquier otro caso, el prompt del juego de conexiones.
+  const baseInstruction = mode === "libre" ? FREE_INITIAL_SYSTEM_INSTRUCTION : activeSystemInstruction;
+
+  return `${baseInstruction}
 
 --- BASE DE CONOCIMIENTO Y VOCES REALES DE LA CUENCA DEL RÍO SAN PEDRO (TESTIMONIOS, HISTORIA Y ARCHIVOS) ---
 ${docsText}
@@ -557,20 +561,10 @@ app.post("/api/chat", async (req, res) => {
 
     const ai = getGenAI();
 
-    // Instrucción para distinguir el comportamiento según el modo seleccionado
-    const modePrompt = mode === 'libre'
-      ? `INSTRUCCIÓN CRÍTICA PARA MODO DIÁLOGO LIBRE:
-El visitante seleccionó "Diálogo Libre" para aprender e indagar sobre el territorio.
-- Queda ESTRICTAMENTE PROHIBIDO pedirle recuerdos personales al visitante o invitarlo a jugar al "juego de las conexiones".
-- Responde directamente a lo que te pregunta con información concreta, variada y rica de tus documentos (Marco el geólogo, rocas, peces endémicos, la Sra. Maximina, aves del Mocho-Choshuenco, Lola Hoffmann y la causa del cauce libre).
-- MANTÉN LA REGLA INTERESPECIE: Habla desde la vida no-humana, la ciencia y los saberes del territorio.
-- NO menciones el terremoto de 1960 o el Riñihuazo a menos que el visitante lo pida explícitamente.`
-      : `INSTRUCCIÓN PARA MODO JUEGO DE CONEXIONES:
-Acompaña la memoria del visitante en 3 pasos: profundización sensorial/emocional, puente con una voz de tu cuenca con pregunta de resonancia, e invitación a registrar su palabra en la sala.`;
-
-    const customOrSystemPrompt = systemInstruction || activeSystemInstruction;
-    const baseContextDocs = compileContext(message);
-    const finalSystemPrompt = `${customOrSystemPrompt}\n\n${modePrompt}\n\n${baseContextDocs}`;
+    // El contexto base ya elige el prompt correcto según el modo
+    // ("libre" usa el diálogo libre, cualquier otro valor usa el juego)
+    const baseContextDocs = compileContext(message, mode);
+    const finalSystemPrompt = systemInstruction || baseContextDocs;
 
     // Mapear historial en formato estándar de Gemini
     const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
@@ -682,9 +676,16 @@ try {
   console.warn("Could not read voices.json, starting empty:", e);
 }
 
-app.get("/api/voices", (_req, res) => {
+const CURATOR_SECRET = process.env.CURATOR_SECRET || "serpuente2026";
+
+app.get("/api/voices", (req, res) => {
+  if (req.query.key !== CURATOR_SECRET) {
+    res.status(401).json({ error: "No autorizado." });
+    return;
+  }
   res.json({ voices: collectiveVoices, totalCount: collectiveVoices.length });
 });
+
 
 app.post("/api/voices", (req, res) => {
   const { visitorId, userMessage, riverReply } = req.body || {};
