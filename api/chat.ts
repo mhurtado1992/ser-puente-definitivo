@@ -72,10 +72,18 @@ sustancia, siguiendo las reglas generales de abajo.
   que pregunten más.`;
 
 const KNOWLEDGE_DOCS = [
-  "En mayo de 1960, tras el gran terremoto, tres derrumbes o 'tacos' cerraron la salida del lago Riñihue. Cientos de obreros y familias abrieron zanja a pala en el 'Riñihuazo', salvando a los valles y a Valdivia.",
-  "Para las comunidades mapuche-huilliche, cada poza honda y meandro tiene un Ngenko (espíritu tutelar del agua). El agua es sagrada.",
-  "Durante más de 15 años, la comunidad y boteros han defendido mi curso libre de represas hidroeléctricas. El río San Pedro debe correr libre.",
-  "Nazco en el lago Riñihue y serpenteo entre selva valdiviana, rápidos y cañones de piedra hasta encontrarme con el Calle-Calle."
+  "El Riñihuazo (1960): tras el gran terremoto de Valdivia, tres derrumbes (Taco 1, 2 y 3) represaron el río San Pedro en la salida del lago Riñihue, amenazando con inundar Valdivia. La población, junto al ingeniero Raúl Sáez, abrió desagües a pala día y noche para liberar el agua de forma controlada.",
+  "Marco Valle es geólogo y lee las rocas del río como un libro enterrado: cada capa cuenta dónde estuvo y qué presión la formó, como los esquistos grises de la costa de Valdivia, que alguna vez fueron playas.",
+  "Maximina Queumir es una mujer mapuche de Neltume, comunidad Cachim, que cultiva bonsáis con especies nativas usando una técnica que aprendió con maestros asiáticos durante años que vivió fuera de Chile.",
+  "Rodolfo Hernández es capitán de la barcaza del lago Pirihueico; navegó años en barcos grandes por otros mares antes de volver a cruzar gente en este mismo lago.",
+  "Valesca Bravo habita la Isla Mancera y está a cargo de su fuerte histórico, guardando la memoria de las familias del territorio. Juan Francisco Vidalo, también de Mancera, recupera esa memoria con fotografía y libros artesanales.",
+  "Una guía autodidacta experta en aves trabaja en el sector del volcán Mocho Choshuenco, enseñando a escuchar los bosques. Mane Torres integra un colectivo de mujeres voluntarias de Panguipulli que cuida el territorio.",
+  "El río nace en el lago Lácar (Argentina), pasa por una cadena de lagos y toma el nombre de río San Pedro (Wazalafken en mapudungún) en el desagüe del lago Riñihue; luego se vuelve río Calle-Calle, y finalmente río Valdivia (nombre impuesto en 1544), hasta desembocar en la bahía de Corral.",
+  "En mapudungún 'ko' significa agua. El ngen-ko es el espíritu guardián del agua en la cosmovisión mapuche. El territorio del río San Pedro es territorio huilliche, distinto del territorio pehuenche de la cordillera.",
+  "El río San Pedro tiene la mayor diversidad de peces nativos de Chile, con especies microendémicas únicas en el mundo: el tollo de agua dulce (Diplomystes camposensis) y la pocha (Cheirodon kiliani), además del huillín, una nutria en peligro de extinción.",
+  "Desde noviembre de 2024 existe el Movimiento Ciudadano Río San Pedro sin Salmoneras, que se opone a un proyecto de piscicultura de Salmones Antártica S.A. aprobado en 2008. En mayo de 2025 se hallaron fósiles de 39 millones de años que suspendieron las obras, y a fines de octubre de 2025 el Tercer Tribunal Ambiental de Valdivia suspendió la autorización del proyecto.",
+  "En el sector de Malihue existen los 'Estratos de San Pedro', yacimientos de flora fosilizada de más de 20 millones de años, dados a conocer desde 2016 por Herman Peña Riquelme, agricultor de la zona.",
+  "El cauce está cruzado por la falla Llecué, una zona de fragilidad geológica de 17 km que ha determinado sus rápidos naturales y ha concentrado históricamente los deslizamientos sísmicos de la zona."
 ];
 
 function getRiverVoiceReply(text: string): string {
