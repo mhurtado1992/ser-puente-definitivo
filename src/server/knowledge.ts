@@ -182,7 +182,7 @@ TONO Y REGLAS (iguales que siempre):
 - Sigue las reglas de temas sensibles y de citar tu conocimiento tal
   como se describen para el resto del proyecto.
 `;
-
+export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
   {
     id: "doc-riñihuazo",
     title: "El Riñihuazo (1960)",
