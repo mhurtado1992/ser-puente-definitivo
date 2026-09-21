@@ -135,6 +135,7 @@
 
       <div class="pad" style="border-bottom:1px solid var(--rule);">
         <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+        <p style="margin:12px 0 0; font-size:8px; letter-spacing:.1em; opacity:.6; text-transform:uppercase;">Lo que converses aquí se suma al archivo de voces de esta obra — no es una conversación privada.</p>
       </div>
     </div>
 
@@ -165,8 +166,42 @@
       <button type="button" class="ghost" id="closeAboutBtn" style="padding:4px 10px;">✕ CERRAR</button>
     </div>
     <div style="font-size:10px; line-height:2; text-transform:uppercase; overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
-      <p><strong>SER PUENTE</strong> es una instalación artística e interactiva creada por <strong>María Hurtado Izquierdo</strong> en Valdivia, Chile.</p>
-      <p>La obra explora la memoria viva de la cuenca del Río San Pedro (Wazalafken), desde su origen en el Lago Riñihue hasta su desembocadura.</p>
+      <p><strong>SER PUENTE</strong> (2026), de la artista multimedial <strong>MARÍA HURTADO IZQUIERDO</strong>, es una obra realizada en el marco de la Residencia Cuencas 2025, desarrollada en la Región de Los Ríos, Chile, siguiendo el recorrido de la cuenca del río Valdivia desde la cordillera hasta el mar. La obra investiga la noción de escucha y busca aproximarse a las posibles voces del río, entendiendo el territorio como un entramado de memorias humanas y no humanas.</p>
+
+      <p style="font-weight:600; letter-spacing:.06em;">"Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red."</p>
+
+      <p>La obra se articula en dos dimensiones principales.</p>
+
+      <p>Por una parte, una dimensión visual, construida a partir de registros realizados con una cámara oscura estenopeica, diseñada y construida por la artista. A través de este dispositivo, se capturaron imágenes del río que se alejan del registro documental, proponiendo una mirada más poética y onírica del paisaje. Estas imágenes buscan abstraer el río de su representación habitual, intentando aproximarse a su esencia y a una temporalidad más sensible e intuitiva.</p>
+
+      <p>Por otra parte, la obra se sostiene en una dimensión sonora y relacional, basada en un extenso proceso de entrevistas. Durante la residencia se realizaron 38 entrevistas a personas vinculadas a distintos puntos de la cuenca del río Valdivia. Este proceso se desarrolló durante un viaje de una semana, en el que la artista recorrió el territorio bordeando el curso del río, estableciendo encuentros, conversaciones y formas de escucha tanto con personas como con otros seres y elementos del paisaje.</p>
+
+      <p>A partir de estas entrevistas y registros, este mismo dispositivo interactivo que estás usando fue desarrollado mediante inteligencia artificial: un chat conversacional que permite dialogar con el río, accediendo a una voz colectiva compuesta por relatos, memorias y expresiones poéticas surgidas durante el recorrido.</p>
+
+      <p>De este modo, Ser Puente propone al río no solo como un cuerpo de agua, sino como un sujeto relacional, un canal de múltiples voces y tiempos, y una entidad viva con la que es posible establecer un vínculo de escucha, diálogo y reciprocidad.</p>
+
+      <div style="border-top:1px solid var(--rule); margin-top:8px; padding-top:16px;">
+        <p style="font-weight:600;">FICHA TÉCNICA</p>
+        <p style="line-height:2.4;">
+          TÍTULO: SER PUENTE<br>
+          AÑO: 2026<br>
+          AUTORA: MARÍA HURTADO IZQUIERDO<br>
+          CONTEXTO: RESIDENCIA CUENCAS 2025, REGIÓN DE LOS RÍOS, CHILE<br>
+          TÉCNICA: INSTALACIÓN SONORA, VISUAL E INTERACTIVA (INTELIGENCIA ARTIFICIAL)<br>
+          MATERIALES: CÁMARA OSCURA ESTENOPEICA, REGISTROS FOTOGRÁFICOS Y DE VIDEO, 38 ENTREVISTAS SONORAS, CHAT CONVERSACIONAL
+        </p>
+      </div>
+
+      <img src="/img_8644.jpg" alt="Registro de cámara oscura, río San Pedro" style="width:100%; height:auto; border:1px solid var(--rule); margin-top:4px;">
+
+      <div style="border-top:1px solid var(--rule); margin-top:8px; padding-top:16px;">
+        <p style="font-weight:600;">MÁS SOBRE LA ARTISTA</p>
+        <p style="line-height:2.4;">
+          <a href="https://analogolab.com/analogolab" target="_blank" rel="noopener">ANALOGOLAB.COM</a><br>
+          <a href="https://www.instagram.com/mariahurtadoizq/" target="_blank" rel="noopener">INSTAGRAM — MARÍA HURTADO IZQUIERDO</a><br>
+          <a href="https://www.instagram.com/analogo.lab/" target="_blank" rel="noopener">INSTAGRAM — ANÁLOGO LAB</a>
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -208,6 +243,56 @@ const SUGERENCIAS = {
   libre:  [["PECES ENDÉMICOS","Háblame de los peces únicos que habitan tus aguas subacuáticas."],
            ["LAS ROCAS Y LA TIERRA","¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"]]
 };
+
+const TEMAS_LIBRES = [
+  ["PECES ENDÉMICOS", "Háblame de los peces únicos que habitan tus aguas."],
+  ["LAS ROCAS Y LA TIERRA", "¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"],
+  ["EL RIÑIHUAZO", "Cuéntame qué pasó en el Riñihuazo de 1960."],
+  ["LA SALMONERA", "¿Qué está pasando con la salmonera que te amenaza?"],
+  ["COSMOVISIÓN MAPUCHE", "Háblame del ngen-ko y la cosmovisión mapuche de tu territorio."],
+  ["ISLA MANCERA", "Cuéntame de la Isla Mancera y su historia."],
+  ["LOS BARQUEROS", "Háblame de Rodolfo y la barcaza del lago Pirihueico."],
+  ["LOS FÓSILES", "Cuéntame de los fósiles que hay en tus orillas."],
+  ["MAXIMINA Y LOS BONSÁIS", "Háblame de Maximina y los bonsáis que cultiva."],
+  ["LOS NOMBRES DEL RÍO", "¿Por qué te llamas San Pedro, Wazalafken, o Calle-Calle?"]
+];
+
+function elegirTemasAleatorios(n){
+  const copia = [...TEMAS_LIBRES];
+  const elegidos = [];
+  for (let i = 0; i < n && copia.length > 0; i++){
+    const idx = Math.floor(Math.random() * copia.length);
+    elegidos.push(copia.splice(idx, 1)[0]);
+  }
+  return elegidos;
+}
+
+function elegirTemasRelacionados(respuesta, n){
+  const rBaja = respuesta.toLowerCase();
+  const relacionados = TEMAS_LIBRES.filter(([, prompt]) => {
+    const palabras = (prompt.toLowerCase().match(/[a-záéíóúñ]{5,}/g) || []);
+    return palabras.some(p => rBaja.includes(p));
+  });
+  const resultado = relacionados.slice(0, n);
+  if (resultado.length < n){
+    const restantes = TEMAS_LIBRES.filter(t => !resultado.includes(t));
+    while (resultado.length < n && restantes.length > 0){
+      const idx = Math.floor(Math.random() * restantes.length);
+      resultado.push(restantes.splice(idx, 1)[0]);
+    }
+  }
+  return resultado;
+}
+
+function pintarBotones(lista){
+  suggest.innerHTML = '';
+  lista.forEach(([label, text]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
+    b.onclick = () => enviar(text);
+    suggest.appendChild(b);
+  });
+}
 
 const home = document.getElementById('home'), chat = document.getElementById('chat');
 const thread = document.getElementById('thread'), suggest = document.getElementById('suggest');
@@ -259,7 +344,7 @@ async function consultarGeminiDirecto(mensajeUsuario) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ message: mensajeUsuario, history: historyPayload })
+      body: JSON.stringify({ message: mensajeUsuario, history: historyPayload, mode: modo })
     });
 
     if (!res.ok) throw new Error('Respuesta no válida del servidor');
@@ -278,32 +363,55 @@ async function consultarGeminiDirecto(mensajeUsuario) {
   }
 }
 
+const VOCES_CONOCIDAS = ["Marco", "Maximina", "Rodolfo", "Valesca", "Juan Francisco", "Mane Torres"];
+
+function mostrarSugerenciasFinales(respuesta){
+  suggest.innerHTML = '';
+  const nombresEncontrados = VOCES_CONOCIDAS.filter(n => respuesta.includes(n));
+  nombresEncontrados.slice(0, 2).forEach(nombre => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ghost';
+    b.textContent = 'MÁS DE ' + nombre.toUpperCase();
+    b.onclick = () => enviar(`Cuéntame más de ${nombre}`);
+    suggest.appendChild(b);
+  });
+  const otro = document.createElement('button');
+  otro.type = 'button'; otro.className = 'ghost';
+  otro.textContent = 'CONTAR OTRO RECUERDO';
+  otro.onclick = () => entrar('guiado');
+  suggest.appendChild(otro);
+}
+
 async function enviar(texto){
   const t = (texto || field.value || '').trim(); 
   if (!t) return;
   if (chat.hasAttribute('hidden')) { entrar('libre', t); return; }
   
   add('yo', t); field.value = ''; typing(true);
+  suggest.innerHTML = ''; // se ocultan mientras el río piensa y responde
   const respuesta = await consultarGeminiDirecto(t);
   typing(false);
   add('rio', respuesta);
+
+  if (modo === 'libre') {
+    // En diálogo libre, los botones van cambiando según de qué se habló
+    pintarBotones(elegirTemasRelacionados(respuesta, 2));
+  } else if (respuesta.includes('dejamos de percibirnos como individuos aislados')) {
+    // En el juego, solo se muestran sugerencias nuevas al cerrar
+    mostrarSugerenciasFinales(respuesta);
+  }
 }
 
 function entrar(m, primerTexto){
   modo = m; history = []; thread.innerHTML = '';
   document.getElementById('modeLabel').textContent = m === 'guiado' ? 'PASO A PASO / EL JUEGO DE LAS CONEXIONES' : 'DIÁLOGO LIBRE';
   const saludoInicial = m === 'guiado'
-    ? 'Soy el río San Pedro, también Wazalafken. Guardo muchas vidas y voces. Juguemos a ver cómo se conectan las memorias: ¿me cuentas un recuerdo que hayas tenido en un cuerpo de agua?'
+    ? 'Soy el río San Pedro, Wazalafken. Llevo dentro muchas voces reales de personas que conocí en mi cuenca. El juego funciona así: tú me cuentas una memoria, historia, recuerdo o sueño que tengas con un río, un mar, un lago o cualquier cuerpo de agua —no tiene que ser conmigo—, y yo la conectaré con una de esas voces. Al final, encontraremos juntos qué une a ambas historias, para que dejes una huella en la sala. ¿Qué recuerdo o momento con el agua te gustaría compartir?'
     : 'Hola, soy el río San Pedro o Wazalafken. Por mis aguas corren historias, memoria y vidas. ¿Qué te gustaría conversar hoy?';
     
   add('rio', saludoInicial);
-  suggest.innerHTML = '';
-  SUGERENCIAS[m].forEach(([label, text]) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
-    b.onclick = () => enviar(text);
-    suggest.appendChild(b);
-  });
+  const temasIniciales = m === 'guiado' ? SUGERENCIAS.guiado : elegirTemasAleatorios(2);
+  pintarBotones(temasIniciales);
 
   home.style.display = 'none'; home.setAttribute('hidden', '');
   chat.removeAttribute('hidden'); chat.style.display = 'flex';
