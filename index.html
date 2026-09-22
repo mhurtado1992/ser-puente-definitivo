@@ -17,7 +17,7 @@
   a:hover { opacity:.6; }
   input::placeholder, textarea::placeholder { color:rgba(43,60,219,.42); }
 
-  .page { min-height:100dvh; display:flex; flex-direction:column; padding:clamp(0px,3vw,46px) clamp(0px,3vw,46px) 0; }
+  .page { min-height:100dvh; display:flex; flex-direction:column; padding:clamp(0px,3vw,46px); }
   .sheet { width:100%; max-width:1400px; margin:0 auto; border:1px solid var(--rule); background:var(--paper); display:flex; flex-direction:column; flex:1; min-height:0; }
   .bar { display:flex; align-items:center; justify-content:space-between; gap:12px 18px; flex-wrap:wrap; border-bottom:1px solid var(--rule); padding:16px clamp(16px,2.2vw,28px); }
   .wordmark { font-size:14px; font-weight:600; letter-spacing:.14em; cursor:pointer; user-select:none; display:inline-flex; align-items:center; gap:12px; }
@@ -30,7 +30,7 @@
   .col { display:flex; flex-direction:column; gap:clamp(46px,9vh,96px); }
   .micro { font-size:10px; letter-spacing:.14em; line-height:2; }
   .micro.b { font-weight:900; letter-spacing:.16em; }
-  .hero { display:block; width:100%; height:clamp(280px,52vh,540px); object-fit:cover; }
+  .hero { display:block; width:100%; height:clamp(280px,52vh,540px); object-fit:cover; border-bottom:1px solid var(--rule); }
 
   .cells { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); }
   .cell { cursor:pointer; text-align:left; background:transparent; color:inherit; font:inherit; border:0;
@@ -38,13 +38,13 @@
           padding:clamp(18px,2.2vw,26px) clamp(16px,2.2vw,28px); display:flex; flex-direction:column; gap:clamp(26px,4vh,40px);
           transition:background 180ms ease; }
   .cell:hover { background:rgba(43,60,219,.05); }
-  .label { font-size:9px; font-weight:500; letter-spacing:.18em; }
+  .label { font-size:9px; font-weight:500; letter-spacing:.18em; font-style:italic; }
   .pill { align-self:flex-start; display:inline-flex; align-items:center; gap:14px; border:1px solid var(--rule); border-radius:2px;
           padding:12px 20px; min-height:44px; font-size:9px; font-weight:600; letter-spacing:.2em;
           transition:background 180ms ease,color 180ms ease; }
   .cell:hover .pill, .ghost:hover { background:var(--rule); color:var(--paper); }
   .empty { min-height:180px; border-bottom:1px solid var(--rule); padding:clamp(18px,2.2vw,26px) clamp(16px,2.2vw,28px); display:flex; align-items:center; }
-  .empty p { margin:0; font-size:9px; font-weight:300; letter-spacing:.1em; line-height:1.9; text-transform:uppercase; text-wrap:pretty; color:rgba(43,60,219,.42); }
+  .empty p { margin:0; font-size:8px; font-weight:300; letter-spacing:.1em; line-height:2.1; text-transform:uppercase; text-wrap:pretty; color:rgba(43,60,219,.42); }
   .curatorial { margin:0; font-size:10px; font-weight:300; letter-spacing:.1em; line-height:2.1; text-transform:uppercase; text-wrap:pretty; }
 
   .ghost { cursor:pointer; background:transparent; color:inherit; font:inherit; border:1px solid rgba(43,60,219,.45); border-radius:2px;
@@ -58,14 +58,16 @@
   .msg p { margin:0; width:fit-content; max-width:min(72ch,100%); font-size:11px; line-height:2.1; text-wrap:pretty; white-space:pre-wrap; }
   .msg.rio { align-items:flex-start; }
   .msg.rio p { font-weight:300; letter-spacing:.06em; }
+  .msg.rio p strong { font-weight:700; }
   .msg.yo { align-items:flex-end; text-align:right; }
   .msg.yo p { font-weight:400; letter-spacing:.12em; border:1px solid rgba(43,60,219,.45); background:rgba(43,60,219,.06); padding:14px 18px; }
   .typing { display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(43,60,219,.28); padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); font-size:9px; letter-spacing:.2em; }
   .typing span:last-child { font-weight:300; animation:blink 1.4s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:.25} 50%{opacity:1} }
-  .suggest { display:flex; flex-wrap:wrap; gap:10px; border-top:1px solid var(--rule); padding:clamp(14px,1.8vw,20px) clamp(16px,2.2vw,28px); }
+  .suggest { display:flex; flex-wrap:wrap; gap:10px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:clamp(14px,1.8vw,20px) clamp(16px,2.2vw,28px); }
+  #suggest button.selected { background:var(--rule); color:var(--paper); }
 
-  form.composer { margin-top:auto; position:sticky; bottom:0; background:var(--paper); border-top:1px solid var(--rule); display:flex; align-items:stretch; }
+  form.composer { margin-top:auto; position:sticky; bottom:0; background:var(--paper); display:flex; align-items:stretch; }
   form.composer input { flex:1; min-width:0; background:transparent; border:0; outline:none; color:var(--rule);
         font-family:inherit; font-weight:300; font-size:10px; letter-spacing:.14em; padding:20px clamp(16px,2.2vw,28px); }
   form.composer button { cursor:pointer; border:0; border-left:1px solid var(--rule); background:transparent; color:var(--rule);
@@ -90,6 +92,9 @@
 
   .disclaimer { width:100%; max-width:1400px; margin:0 auto; padding:20px clamp(16px,2.2vw,28px) 34px; font-size:10px; font-weight:300; letter-spacing:.04em; line-height:1.7; color:rgba(43,60,219,.42); }
 
+  @keyframes fadeUp { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  [data-reveal] { opacity:0; animation:fadeUp 700ms ease forwards; }
+
   [hidden] { display:none !important; }
 
   @media (max-width:640px){ .bar .mode { width:100%; text-align:left; } }
@@ -107,14 +112,14 @@
   <div class="sheet">
     <!-- INICIO -->
     <div id="home" style="display:flex;flex-direction:column;flex:1;">
-      <div class="bar">
+      <div class="bar" data-reveal style="animation-delay:0ms">
         <span class="wordmark secret-trigger" title="Ser Puente"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNIDAgMTAwIEEgMTAwIDEwMCAwIDAgMSAyMDAgMTAwIEggMTY4IEEgNjggNjggMCAwIDAgMzIgMTAwIFoiIGZpbGw9IiMyYjNjZGIiIC8+Cjwvc3ZnPgo=" alt="" aria-hidden="true">SER PUENTE</span>
         <div class="nav">
           <button type="button" class="ghost" id="openAboutBtn" style="padding:10px 16px; min-height:40px;">SOBRE LA OBRA</button>
         </div>
       </div>
 
-      <div class="intro">
+      <div class="intro" data-reveal style="animation-delay:120ms">
         <div class="col">
           <span class="micro b">VOCES DEL RÍO</span>
           <span class="micro">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
@@ -124,13 +129,13 @@
         </div>
       </div>
 
-      <img id="rio" class="hero" src="/rio.jpg" alt="El río San Pedro">
+      <img id="rio" class="hero" data-reveal style="animation-delay:220ms" src="/rio.jpg" alt="El río San Pedro">
 
-      <div class="pad" style="border-bottom:1px solid var(--rule);">
+      <div class="pad" data-reveal style="border-bottom:1px solid var(--rule); animation-delay:340ms">
         <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
       </div>
 
-      <div id="voces" class="cells">
+      <div id="voces" class="cells" data-reveal style="animation-delay:460ms">
         <button type="button" class="cell" data-mode="guiado">
           <span class="label">PASO A PASO</span>
           <span class="micro">EL JUEGO DE<br>LAS CONEXIONES</span>
@@ -142,7 +147,7 @@
           <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
         </button>
         <div id="obra" class="empty">
-          <p>Las respuestas de este chat se basan en 38 entrevistas reales recogidas durante una residencia de investigación artística, en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar.</p>
+          <p>Las respuestas de este chat se basan en 38 entrevistas reales, recogidas durante una residencia de investigación artística en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar. Lo que converses aquí se suma a ese mismo archivo de voces — no es una conversación privada.</p>
         </div>
       </div>
     </div>
@@ -164,7 +169,6 @@
       <button type="submit" id="sendBtn">ENVIAR</button>
     </form>
   </div>
-  <p class="disclaimer">Lo que converses aquí se suma al archivo de voces de esta obra — no es una conversación privada.</p>
 </div>
 
 <!-- MODAL SOBRE LA OBRA -->
@@ -234,27 +238,127 @@
 </div>
 
 <script type="module">
-const SUGERENCIAS = {
-  guiado: [["RECUERDO","Recuerdo que "],["SUEÑO","Soñé que "],["HISTORIA","Una vez "]],
-  libre:  [["PECES ENDÉMICOS","Háblame de los peces únicos que habitan tus aguas subacuáticas."],
-           ["LAS ROCAS Y LA TIERRA","¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"]]
-};
-
 const OPCIONES_PAPEL = [["CONCEPTO","Voy a dejar un concepto o palabra en el papel."],["DIBUJO","Voy a dejar un dibujo en el papel."],["FRASE","Voy a dejar una frase en el papel."]];
 
-function pintarBotonesPrellenar(lista){
+// Banco de conceptos reales del juego "El mapa de conexiones". Cada entrada es
+// [ETIQUETA DEL BOTÓN, frase para referirse al concepto dentro del mensaje al río].
+const CONCEPTOS_RIO = [
+  ["RIÑIHUAZO", "el Riñihuazo de 1960"],
+  ["LAS ROCAS DE MARCO", "las rocas y la historia geológica que lee Marco Valle"],
+  ["EL METEORITO Y LOS DINOSAURIOS", "la extinción de los dinosaurios que Marco Valle relaciona con la lectura de las rocas"],
+  ["ROCAS ÍGNEAS", "las rocas ígneas que vienen del magma enfriado, según explica Marco Valle"],
+  ["ROCAS METAMÓRFICAS", "las rocas metamórficas, como los esquistos grises, que fueron otra roca antes de transformarse"],
+  ["CRISTALES", "los cristales que a veces aparecen en las rocas, formados muy lentamente"],
+  ["LA ARCILLA", "la arcilla, el sedimento fino y la roca más joven y blanda de la cuenca"],
+  ["BONSÁIS DE MAXIMINA", "los bonsáis y el regreso de Maximina a su comunidad"],
+  ["EL CAPITÁN DEL PIRIHUEICO", "Rodolfo y la barcaza del lago Pirihueico"],
+  ["ISLA MANCERA", "la memoria de Isla Mancera"],
+  ["AVES DEL MOCHO CHOSHUENCO", "los cantos de aves del volcán Mocho Choshuenco"],
+  ["MUJERES DE PANGUIPULLI", "el colectivo de mujeres que cuida el territorio en Panguipulli"],
+  ["LOS NOMBRES DEL RÍO", "los distintos nombres que ha tenido el río a lo largo de su curso"],
+  ["EL NGEN-KO", "la cosmovisión mapuche del agua, el ngen-ko"],
+  ["PECES ENDÉMICOS", "los peces únicos en el mundo que viven en el río"],
+  ["LA SALMONERA", "el movimiento que defiende el río de la salmonera"],
+  ["FÓSILES DE MALIHUE", "los fósiles de más de 20 millones de años de Malihue"],
+  ["LA FALLA LLECUÉ", "la falla geológica que forma los rápidos del río"]
+];
+
+const TEXTO_SEGUIR = 'Quiero seguir jugando.';
+const TEXTO_TERMINAR = 'Prefiero terminar aquí, gracias.';
+const DECISION_SEGUIR = [["SEGUIR JUGANDO", TEXTO_SEGUIR], ["TERMINAR AQUÍ", TEXTO_TERMINAR]];
+
+let estadoJuego = 'ronda1';
+let conceptosElegidosCamino = [];
+let conceptosMostrados = []; // todos los ofrecidos hasta ahora, elegidos o no — nunca se repiten entre rondas
+let seleccionActual = [];
+
+function iniciarRondaConceptos(){
+  let disponibles = CONCEPTOS_RIO.filter(([label]) => !conceptosMostrados.includes(label));
+  if (disponibles.length < 3) { conceptosMostrados = [...conceptosElegidosCamino]; disponibles = CONCEPTOS_RIO.filter(([label]) => !conceptosMostrados.includes(label)); }
+  const copia = [...disponibles];
+  const elegidos = [];
+  for (let i = 0; i < 3 && copia.length > 0; i++){
+    const idx = Math.floor(Math.random() * copia.length);
+    elegidos.push(copia.splice(idx, 1)[0]);
+  }
+  conceptosMostrados.push(...elegidos.map(([label]) => label));
+  pintarBotonesConceptos(elegidos);
+}
+
+function pintarBotonesConceptos(lista){
+  seleccionActual = [];
   suggest.innerHTML = '';
-  lista.forEach(([label, textoPrevio]) => {
+  const controles = []; // botones de concepto + el input propio, para deshabilitarlos juntos
+
+  function registrarSeleccion(item){
+    seleccionActual.push(item);
+    if (seleccionActual.length === 2) {
+      controles.forEach(x => x.disabled = true);
+      setTimeout(enviarSeleccionConceptos, 350);
+    }
+  }
+
+  lista.forEach(([label, frase]) => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
-    b.onclick = () => { field.value = textoPrevio; field.focus(); };
+    b.type = 'button'; b.className = 'ghost';
+    b.textContent = label;
+    b.onclick = () => {
+      const yaElegido = seleccionActual.some(s => s.frase === frase);
+      if (yaElegido) {
+        seleccionActual = seleccionActual.filter(s => s.frase !== frase);
+        b.classList.remove('selected');
+        return;
+      }
+      if (seleccionActual.length < 2) {
+        b.classList.add('selected');
+        registrarSeleccion({ label, frase, propio: false });
+      }
+    };
+    controles.push(b);
     suggest.appendChild(b);
   });
+
+  // Cuarta opción: que la persona escriba su propio concepto en vez de uno de los tres.
+  const cajaPropio = document.createElement('div');
+  cajaPropio.style.cssText = 'display:flex; align-items:stretch; gap:0; border:1px solid rgba(43,60,219,.45); border-radius:2px; overflow:hidden;';
+  const inputPropio = document.createElement('input');
+  inputPropio.type = 'text'; inputPropio.placeholder = 'U OTRO CONCEPTO TUYO…';
+  inputPropio.style.cssText = 'flex:1; min-width:140px; background:transparent; border:0; outline:none; color:var(--rule); font-family:inherit; font-size:9px; font-weight:500; letter-spacing:.1em; padding:0 12px;';
+  const btnPropio = document.createElement('button');
+  btnPropio.type = 'button'; btnPropio.className = 'ghost'; btnPropio.textContent = '+';
+  btnPropio.style.cssText = 'border:0; border-left:1px solid rgba(43,60,219,.45); min-height:40px; padding:0 14px;';
+  function enviarPropio(){
+    const texto = inputPropio.value.trim();
+    if (!texto || seleccionActual.length >= 2) return;
+    inputPropio.value = '';
+    registrarSeleccion({ label: texto, frase: `mi propio concepto "${texto}"`, propio: true });
+  }
+  btnPropio.onclick = enviarPropio;
+  inputPropio.addEventListener('keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); enviarPropio(); } });
+  cajaPropio.appendChild(inputPropio); cajaPropio.appendChild(btnPropio);
+  suggest.appendChild(cajaPropio);
+  controles.push(inputPropio, btnPropio);
+}
+
+function enviarSeleccionConceptos(){
+  const [a, b] = seleccionActual;
+  conceptosElegidosCamino.push(a.label, b.label);
+  const esCierre = estadoJuego === 'ronda2';
+  const hayPropio = a.propio || b.propio;
+  const intro = hayPropio
+    ? (esCierre ? 'Elijo estos dos últimos conceptos, uno de ellos mío: ' : 'Elijo estos dos conceptos, uno de ellos mío: ')
+    : (esCierre ? 'Elijo estos dos últimos conceptos: ' : 'Elijo estos dos conceptos: ');
+  const pregunta = esCierre ? '¿Cómo se conectan, y qué arma todo este camino junto?' : '¿Cómo se conectan?';
+  const texto = `${intro}${a.frase} y ${b.frase}. ${pregunta}`;
+  enviar(texto);
 }
 
 const TEMAS_LIBRES = [
   ["PECES ENDÉMICOS", "Háblame de los peces únicos que habitan tus aguas."],
   ["LAS ROCAS Y LA TIERRA", "¿Qué me puedes contar sobre Marco el geólogo y tus piedras?"],
+  ["ROCAS ÍGNEAS Y METAMÓRFICAS", "¿Qué diferencia hay entre tus rocas ígneas y metamórficas?"],
+  ["CRISTALES Y ARCILLA", "Háblame de los cristales y la arcilla que hay en tus orillas."],
+  ["EL METEORITO Y LOS DINOSAURIOS", "¿Qué cuenta Marco de la extinción de los dinosaurios?"],
   ["EL RIÑIHUAZO", "Cuéntame qué pasó en el Riñihuazo de 1960."],
   ["LA SALMONERA", "¿Qué está pasando con la salmonera que te amenaza?"],
   ["COSMOVISIÓN MAPUCHE", "Háblame del ngen-ko y la cosmovisión mapuche de tu territorio."],
@@ -262,33 +366,45 @@ const TEMAS_LIBRES = [
   ["LOS BARQUEROS", "Háblame de Rodolfo y la barcaza del lago Pirihueico."],
   ["LOS FÓSILES", "Cuéntame de los fósiles que hay en tus orillas."],
   ["MAXIMINA Y LOS BONSÁIS", "Háblame de Maximina y los bonsáis que cultiva."],
-  ["LOS NOMBRES DEL RÍO", "¿Por qué te llamas San Pedro, Wazalafken, o Calle-Calle?"]
+  ["LOS NOMBRES DEL RÍO", "¿Por qué te llamas San Pedro, Wazalafken, o Calle-Calle?"],
+  ["AVES DEL MOCHO CHOSHUENCO", "Háblame de los cantos de aves del volcán Mocho Choshuenco."],
+  ["MUJERES DE PANGUIPULLI", "Cuéntame del colectivo de mujeres que cuida tu territorio en Panguipulli."]
 ];
 
+// Temas ya mostrados en esta conversación de Diálogo Libre — nunca se repiten
+// hasta que se agota el banco completo, y ahí recién se reinicia el ciclo.
+let temasLibresMostrados = [];
+
 function elegirTemasAleatorios(n){
-  const copia = [...TEMAS_LIBRES];
+  let disponibles = TEMAS_LIBRES.filter(t => !temasLibresMostrados.includes(t));
+  if (disponibles.length < n) { temasLibresMostrados = []; disponibles = [...TEMAS_LIBRES]; }
+  const copia = [...disponibles];
   const elegidos = [];
   for (let i = 0; i < n && copia.length > 0; i++){
     const idx = Math.floor(Math.random() * copia.length);
     elegidos.push(copia.splice(idx, 1)[0]);
   }
+  temasLibresMostrados.push(...elegidos);
   return elegidos;
 }
 
 function elegirTemasRelacionados(respuesta, n){
+  let disponibles = TEMAS_LIBRES.filter(t => !temasLibresMostrados.includes(t));
+  if (disponibles.length < n) { temasLibresMostrados = []; disponibles = [...TEMAS_LIBRES]; }
   const rBaja = respuesta.toLowerCase();
-  const relacionados = TEMAS_LIBRES.filter(([, prompt]) => {
+  const relacionados = disponibles.filter(([, prompt]) => {
     const palabras = (prompt.toLowerCase().match(/[a-záéíóúñ]{5,}/g) || []);
     return palabras.some(p => rBaja.includes(p));
   });
   const resultado = relacionados.slice(0, n);
   if (resultado.length < n){
-    const restantes = TEMAS_LIBRES.filter(t => !resultado.includes(t));
+    const restantes = disponibles.filter(t => !resultado.includes(t));
     while (resultado.length < n && restantes.length > 0){
       const idx = Math.floor(Math.random() * restantes.length);
       resultado.push(restantes.splice(idx, 1)[0]);
     }
   }
+  temasLibresMostrados.push(...resultado);
   return resultado;
 }
 
@@ -317,7 +433,12 @@ function add(who, text){
   const el = document.createElement('div');
   el.className = 'msg ' + (who === 'rio' ? 'rio' : 'yo');
   el.innerHTML = '<span class="who">' + (who === 'rio' ? 'EL RÍO' : 'TÚ') + '</span><p></p>';
-  el.querySelector('p').textContent = text;
+  const p = el.querySelector('p');
+  // El río puede resaltar UNA frase puntual con **negrita** (p.ej. la invitación a escribir
+  // en el papel de la sala). El resto del texto siempre va escapado, nunca como HTML libre.
+  p.innerHTML = who === 'rio'
+    ? escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    : escapeHtml(text);
   thread.appendChild(el);
   thread.scrollTop = thread.scrollHeight;
 }
@@ -368,6 +489,7 @@ async function enviar(texto){
   if (!t) return;
   if (chat.hasAttribute('hidden')) { entrar('libre', t); return; }
 
+  const estadoAlEnviar = estadoJuego;
   add('yo', t); field.value = ''; typing(true);
   suggest.innerHTML = '';
   const respuesta = await consultarGeminiDirecto(t);
@@ -376,28 +498,55 @@ async function enviar(texto){
 
   if (modo === 'libre') {
     pintarBotones(elegirTemasRelacionados(respuesta, 3));
-  } else if (respuesta.includes('dejamos de percibirnos como individuos aislados')) {
-    pintarBotones(OPCIONES_PAPEL);
+    return;
   }
+
+  // Modo "paso a paso" — el mapa de conexiones: el avance de ronda lo decide
+  // siempre el frontend (nunca se adivina a partir del texto del río).
+  if (estadoAlEnviar === 'ronda1') {
+    estadoJuego = 'ronda2';
+    iniciarRondaConceptos();
+  } else if (estadoAlEnviar === 'ronda2' || estadoAlEnviar === 'rondaExtra') {
+    estadoJuego = 'decision';
+    pintarBotones(DECISION_SEGUIR);
+  } else if (estadoAlEnviar === 'decision' && t === TEXTO_SEGUIR) {
+    estadoJuego = 'rondaExtra';
+    iniciarRondaConceptos();
+  }
+  // Si estadoAlEnviar === 'decision' y t === TEXTO_TERMINAR, el juego cierra
+  // aquí: no se pintan más botones.
 }
 
 function entrar(m, primerTexto){
   modo = m; history = []; thread.innerHTML = ''; nuevaConversacion(); ultimaActividad = Date.now();
   document.getElementById('modeLabel').textContent = m === 'guiado' ? 'PASO A PASO / EL JUEGO DE LAS CONEXIONES' : 'DIÁLOGO LIBRE';
   const saludoInicial = m === 'guiado'
-    ? 'Soy el río San Pedro, Wazalafken. Llevo dentro muchas voces reales de personas que conocí en mi cuenca. El juego funciona así: tú me cuentas una memoria, historia, recuerdo o sueño que tengas con un río, un mar, un lago o cualquier cuerpo de agua —no tiene que ser conmigo—, y yo la conectaré con una de esas voces. Al final, encontraremos juntos qué une a ambas historias, para que dejes una huella en la sala. ¿Qué recuerdo o momento con el agua te gustaría compartir?'
+    ? `Soy el río San Pedro, Wazalafken. Llevo dentro las voces reales de personas y de la tierra que conocí en mi cuenca. Este es un juego para descubrir que hasta las cosas más distintas están conectadas.
+
+**PASO 1 — ELIGE DOS CONCEPTOS**
+Abajo te voy a mostrar tres conceptos reales de mi cuenca. Elige dos — o escribe el tuyo propio si prefieres.
+
+**PASO 2 — DESCUBRE LA CONEXIÓN**
+Te cuento cómo esos dos conceptos, aunque parezcan no tener nada que ver entre sí, están unidos por una historia real de mi territorio.
+
+**PASO 3 — SUMA TU CAMINO**
+Esto se repite dos veces. Al final, vas a dejar escrito en un papel de la sala el camino de conceptos que armaste, sumándote al coro de voces de esta obra.
+
+Elige los dos primeros conceptos cuando quieras.`
     : 'Hola, soy el río San Pedro, o Wazalafken. Mis voces nacen a lo largo de toda mi cuenca, desde el lago Riñihue hasta el mar: en las comunidades ribereñas y la cosmovisión mapuche que me nombra, en quienes cruzan mis aguas y viven de ellas, en las piedras y los fósiles de mis orillas, y en los peces que habitan bajo mi superficie. Puedes preguntarme por cualquiera de esas voces, o elegir uno de los temas de abajo. ¿Cuál quieres escuchar primero?';
 
   add('rio', saludoInicial);
   if (m === 'guiado') {
-    pintarBotonesPrellenar(SUGERENCIAS.guiado);
+    estadoJuego = 'ronda1'; conceptosElegidosCamino = []; conceptosMostrados = [];
+    iniciarRondaConceptos();
   } else {
+    temasLibresMostrados = [];
     pintarBotones(elegirTemasAleatorios(3));
   }
 
   home.style.display = 'none'; home.setAttribute('hidden', '');
   chat.removeAttribute('hidden'); chat.style.display = 'flex';
-  if (primerTexto) enviar(primerTexto);
+  if (primerTexto && m !== 'guiado') enviar(primerTexto);
 }
 
 function escapeHtml(str){
