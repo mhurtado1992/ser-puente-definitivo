@@ -19,9 +19,9 @@
 
   .page { min-height:100dvh; display:flex; flex-direction:column; padding:clamp(0px,3vw,46px) clamp(0px,3vw,46px) 0; }
   .sheet { width:100%; max-width:1400px; margin:0 auto; border:1px solid var(--rule); background:var(--paper); display:flex; flex-direction:column; flex:1; min-height:0; }
-  .bar { display:flex; align-items:center; justify-content:space-between; gap:18px; border-bottom:1px solid var(--rule); padding:16px clamp(16px,2.2vw,28px); }
-  .wordmark { font-size:11px; font-weight:600; letter-spacing:.14em; cursor:pointer; user-select:none; display:inline-flex; align-items:center; gap:12px; }
-  .wordmark img { height:13px; width:auto; display:block; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px 18px; flex-wrap:wrap; border-bottom:1px solid var(--rule); padding:16px clamp(16px,2.2vw,28px); }
+  .wordmark { font-size:14px; font-weight:600; letter-spacing:.14em; cursor:pointer; user-select:none; display:inline-flex; align-items:center; gap:12px; }
+  .wordmark img { height:17px; width:34px; object-fit:contain; display:block; }
   .nav { display:flex; align-items:center; gap:clamp(14px,2vw,30px); font-size:9px; letter-spacing:.16em; }
   .pad { padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); }
 
@@ -32,7 +32,7 @@
   .micro.b { font-weight:900; letter-spacing:.16em; }
   .hero { display:block; width:100%; height:clamp(280px,52vh,540px); object-fit:cover; }
 
-  .cells { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); border-top:1px solid var(--rule); }
+  .cells { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); }
   .cell { cursor:pointer; text-align:left; background:transparent; color:inherit; font:inherit; border:0;
           border-bottom:1px solid var(--rule); border-right:1px solid var(--rule);
           padding:clamp(18px,2.2vw,26px) clamp(16px,2.2vw,28px); display:flex; flex-direction:column; gap:clamp(26px,4vh,40px);
@@ -43,7 +43,8 @@
           padding:12px 20px; min-height:44px; font-size:9px; font-weight:600; letter-spacing:.2em;
           transition:background 180ms ease,color 180ms ease; }
   .cell:hover .pill, .ghost:hover { background:var(--rule); color:var(--paper); }
-  .empty { min-height:180px; border-bottom:1px solid var(--rule); grid-column:1 / -1; }
+  .empty { min-height:180px; border-bottom:1px solid var(--rule); padding:clamp(18px,2.2vw,26px) clamp(16px,2.2vw,28px); display:flex; align-items:center; }
+  .empty p { margin:0; font-size:9px; font-weight:300; letter-spacing:.1em; line-height:1.9; text-transform:uppercase; text-wrap:pretty; color:rgba(43,60,219,.42); }
   .curatorial { margin:0; font-size:10px; font-weight:300; letter-spacing:.1em; line-height:2.1; text-transform:uppercase; text-wrap:pretty; }
 
   .ghost { cursor:pointer; background:transparent; color:inherit; font:inherit; border:1px solid rgba(43,60,219,.45); border-radius:2px;
@@ -75,7 +76,7 @@
   .modal-overlay { position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px; }
   .modal-body { width:100%; max-width:850px; height:85vh; max-height:85vh; background:var(--paper); border:1px solid var(--rule); padding:24px; display:flex; flex-direction:column; gap:16px; overflow:hidden; }
   .modal-title { font-size:11px; font-weight:600; letter-spacing:.18em; border-bottom:1px solid var(--rule); padding-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-  
+
   .tab-bar { display:flex; gap:8px; border-bottom:1px solid var(--rule); padding-bottom:8px; flex-shrink:0; overflow-x:auto; }
   .tab-btn { cursor:pointer; background:transparent; border:1px solid transparent; color:var(--rule); font-family:inherit; font-size:9px; font-weight:600; letter-spacing:.12em; padding:8px 12px; transition:all 180ms ease; white-space:nowrap; }
   .tab-btn.active { border-color:var(--rule); background:var(--rule); color:var(--paper); }
@@ -87,9 +88,11 @@
   .voice-item { border:1px solid rgba(43,60,219,.3); padding:10px; margin-bottom:8px; font-size:9px; line-height:1.6; }
   .voice-item strong { display:block; color:var(--rule); margin-bottom:2px; }
 
-  .disclaimer { width:100%; max-width:1400px; margin:0 auto; padding:20px clamp(16px,2.2vw,28px) 34px; font-size:7.5px; font-weight:300; letter-spacing:.1em; line-height:1.9; text-transform:uppercase; opacity:.6; }
+  .disclaimer { width:100%; max-width:1400px; margin:0 auto; padding:20px clamp(16px,2.2vw,28px) 34px; font-size:10px; font-weight:300; letter-spacing:.04em; line-height:1.7; color:rgba(43,60,219,.42); }
 
   [hidden] { display:none !important; }
+
+  @media (max-width:640px){ .bar .mode { width:100%; text-align:left; } }
 </style>
 <script type="importmap">
   {
@@ -107,7 +110,7 @@
       <div class="bar">
         <span class="wordmark secret-trigger" title="Ser Puente"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNIDAgMTAwIEEgMTAwIDEwMCAwIDAgMSAyMDAgMTAwIEggMTY4IEEgNjggNjggMCAwIDAgMzIgMTAwIFoiIGZpbGw9IiMyYjNjZGIiIC8+Cjwvc3ZnPgo=" alt="" aria-hidden="true">SER PUENTE</span>
         <div class="nav">
-          <button type="button" class="ghost" id="openAboutBtn" style="padding:6px 12px; min-height:auto;">SOBRE LA OBRA</button>
+          <button type="button" class="ghost" id="openAboutBtn" style="padding:10px 16px; min-height:40px;">SOBRE LA OBRA</button>
         </div>
       </div>
 
@@ -123,6 +126,10 @@
 
       <img id="rio" class="hero" src="/rio.jpg" alt="El río San Pedro">
 
+      <div class="pad" style="border-bottom:1px solid var(--rule);">
+        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+      </div>
+
       <div id="voces" class="cells">
         <button type="button" class="cell" data-mode="guiado">
           <span class="label">PASO A PASO</span>
@@ -134,11 +141,9 @@
           <span class="micro">EXPLORA LAS<br>VOCES DEL RÍO</span>
           <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
         </button>
-        <div id="obra" class="empty"></div>
-      </div>
-
-      <div class="pad" style="border-bottom:1px solid var(--rule);">
-        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+        <div id="obra" class="empty">
+          <p>Las respuestas de este chat se basan en 38 entrevistas reales recogidas durante una residencia de investigación artística, en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar.</p>
+        </div>
       </div>
     </div>
 
@@ -147,7 +152,7 @@
       <div class="bar">
         <button type="button" class="ghost" id="back" style="display:inline-flex;align-items:center;gap:10px;"><span style="font-size:11px;">←</span> VOLVER</button>
         <span class="wordmark secret-trigger"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNIDAgMTAwIEEgMTAwIDEwMCAwIDAgMSAyMDAgMTAwIEggMTY4IEEgNjggNjggMCAwIDAgMzIgMTAwIFoiIGZpbGw9IiMyYjNjZGIiIC8+Cjwvc3ZnPgo=" alt="" aria-hidden="true">SER PUENTE</span>
-        <span class="mode label" id="modeLabel" style="font-weight:400;letter-spacing:.18em;text-align:right;">DIÁLOGO LIBRE</span>
+        <span class="mode micro" id="modeLabel" style="font-weight:400;letter-spacing:.18em;text-align:right;">DIÁLOGO LIBRE</span>
       </div>
 
       <div class="thread" id="thread"></div>
@@ -305,7 +310,7 @@ const voicesLogContainer = document.getElementById('voicesLogContainer');
 
 let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
 let conversacionId = null, ultimaActividad = 0;
-const PAUSA_NUEVA_CONVERSACION = 10 * 60 * 1000; // 10 min sin escribir = otra conversación
+const PAUSA_NUEVA_CONVERSACION = 10 * 60 * 1000;
 function nuevaConversacion(){ conversacionId = 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 function add(who, text){
@@ -313,16 +318,16 @@ function add(who, text){
   el.className = 'msg ' + (who === 'rio' ? 'rio' : 'yo');
   el.innerHTML = '<span class="who">' + (who === 'rio' ? 'EL RÍO' : 'TÚ') + '</span><p></p>';
   el.querySelector('p').textContent = text;
-  thread.appendChild(el); 
+  thread.appendChild(el);
   thread.scrollTop = thread.scrollHeight;
 }
 
 function typing(on){
   let t = document.getElementById('typing');
-  if (on && !t){ 
+  if (on && !t){
     t = document.createElement('div'); t.id='typing'; t.className='typing';
-    t.innerHTML = '<span>EL RÍO</span><span>ESCRIBIENDO ···</span>'; 
-    thread.appendChild(t); thread.scrollTop = thread.scrollHeight; 
+    t.innerHTML = '<span>EL RÍO</span><span>ESCRIBIENDO ···</span>';
+    thread.appendChild(t); thread.scrollTop = thread.scrollHeight;
   }
   if (!on && t) t.remove();
 }
@@ -359,21 +364,19 @@ async function consultarGeminiDirecto(mensajeUsuario) {
 }
 
 async function enviar(texto){
-  const t = (texto || field.value || '').trim(); 
+  const t = (texto || field.value || '').trim();
   if (!t) return;
   if (chat.hasAttribute('hidden')) { entrar('libre', t); return; }
-  
+
   add('yo', t); field.value = ''; typing(true);
-  suggest.innerHTML = ''; // se ocultan mientras el río piensa y responde
+  suggest.innerHTML = '';
   const respuesta = await consultarGeminiDirecto(t);
   typing(false);
   add('rio', respuesta);
 
   if (modo === 'libre') {
-    // En diálogo libre, los botones van cambiando según de qué se habló
     pintarBotones(elegirTemasRelacionados(respuesta, 3));
   } else if (respuesta.includes('dejamos de percibirnos como individuos aislados')) {
-    // Al cerrar el juego, se ofrecen las 3 formas de dejar huella en el papel
     pintarBotones(OPCIONES_PAPEL);
   }
 }
@@ -384,7 +387,7 @@ function entrar(m, primerTexto){
   const saludoInicial = m === 'guiado'
     ? 'Soy el río San Pedro, Wazalafken. Llevo dentro muchas voces reales de personas que conocí en mi cuenca. El juego funciona así: tú me cuentas una memoria, historia, recuerdo o sueño que tengas con un río, un mar, un lago o cualquier cuerpo de agua —no tiene que ser conmigo—, y yo la conectaré con una de esas voces. Al final, encontraremos juntos qué une a ambas historias, para que dejes una huella en la sala. ¿Qué recuerdo o momento con el agua te gustaría compartir?'
     : 'Hola, soy el río San Pedro, o Wazalafken. Mis voces nacen a lo largo de toda mi cuenca, desde el lago Riñihue hasta el mar: en las comunidades ribereñas y la cosmovisión mapuche que me nombra, en quienes cruzan mis aguas y viven de ellas, en las piedras y los fósiles de mis orillas, y en los peces que habitan bajo mi superficie. Puedes preguntarme por cualquiera de esas voces, o elegir uno de los temas de abajo. ¿Cuál quieres escuchar primero?';
-    
+
   add('rio', saludoInicial);
   if (m === 'guiado') {
     pintarBotonesPrellenar(SUGERENCIAS.guiado);
@@ -413,11 +416,10 @@ function formatoHora(ts){
 }
 function etiquetaModo(m){ return m === 'guiado' ? 'PASO A PASO' : m === 'libre' ? 'DIÁLOGO LIBRE' : 'CONVERSACIÓN'; }
 
-// Agrupa los intercambios por conversación: la más reciente primero, y dentro de cada una en orden cronológico.
 function agruparConversaciones(voces){
   const mapa = new Map();
   voces.forEach(v => {
-    const clave = v.conversationId || v.id; // registros antiguos (sin id de conversación) quedan sueltos
+    const clave = v.conversationId || v.id;
     if (!mapa.has(clave)) mapa.set(clave, { mensajes: [], modo: v.mode });
     mapa.get(clave).mensajes.push(v);
   });
