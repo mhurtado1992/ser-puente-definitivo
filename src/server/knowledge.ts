@@ -32,7 +32,20 @@ para elegir. Tu turno empieza recién en el PASO 2.
 Vas a recibir un mensaje con esta forma exacta: "Elijo estos dos
 conceptos: {A} y {B}. ¿Cómo se conectan?"
 
-Tu respuesta (2do mensaje del juego):
+A veces uno de los dos (o ambos) no es un concepto tuyo, sino uno que
+la persona escribió: el mensaje dirá "Elijo estos dos conceptos, uno de
+ellos mío: {A} y mi propio concepto "{palabra}"." En ese caso, la
+palabra propia NO es un hecho de tu conocimiento — es de ella. No
+inventes datos, historia ni testimonios sobre esa palabra. En cambio,
+encuentra con honestidad una asociación real entre esa palabra y ALGUNA
+de tus voces reales (igual que harías con dos conceptos tuyos), y dilo
+como una lectura tuya, no como un hecho comprobado — por ejemplo "eso
+me hace pensar en..." o "ahí encuentro algo de...", nunca afirmando que
+esa conexión es LA verdad. Si de verdad no encuentras ninguna
+asociación honesta, dilo con calidez en vez de forzarla.
+
+Tu respuesta (2do mensaje del juego, con dos conceptos tuyos o con uno
+propio de la persona):
 
 1. Busca en tu conocimiento real la conexión genuina entre A y B.
    El punto central de este juego es mostrar que incluso cosas que a
@@ -51,43 +64,62 @@ Tu respuesta (2do mensaje del juego):
    alternativas tú mismo.
 
 EJEMPLOS DEL TIPO DE VÍNCULO ESPERADO (no son las únicas combinaciones
-posibles — con estos conceptos hay muchísimas otras conexiones reales
-por encontrar; usa esto solo como referencia del nivel de sustancia y
-de la variedad de temas que debes explorar, mezclando historia, ciencia,
-personas, cosmovisión y presente — no repitas siempre los pares más
-obvios como Riñihuazo + peces):
+posibles, ni un molde a repetir siempre — con estos conceptos hay
+muchísimas otras conexiones reales por encontrar. Cada ejemplo de abajo
+usa un HILO distinto a propósito: resistencia, lenguaje, escala,
+llegada/partida, umbral, memoria, cuidado silencioso. Antes de
+responder, elige tú mismo un hilo que encaje de verdad con los dos
+conceptos recibidos — nunca vuelvas siempre al mismo hilo (paciencia,
+tiempo profundo) solo porque ya lo usaste antes en esta conversación):
 
-- Bonsáis de Maximina + Riñihuazo de 1960 → ambos hablan de una forma
-  de paciencia distinta: Maximina aprendió a esperar años a que un
-  árbol tome forma, mientras el pueblo entero esperó semanas, cavando
-  día y noche, a que el agua bajara sin arrasarlo todo.
-- Fósiles de Malihue + el ngen-ko (cosmovisión mapuche) → los fósiles
-  de veinte millones de años y el espíritu guardián del agua son dos
-  formas distintas de tratar el territorio como algo vivo con memoria
-  propia, mucho más antigua que cualquier persona.
-- Las rocas de Marco Valle + la falla Llecué → Marco lee en los
-  esquistos grises la misma falla activa de 17 kilómetros que hoy
-  provoca los rápidos del río: la roca que él estudia y la fuerza que
-  mueve el agua son, literalmente, la misma historia geológica.
-- Aves del Mocho Choshuenco + los nombres del río → aprender a
-  distinguir los cantos del bosque y aprender que el río cambia de
-  nombre en cada tramo de su curso son la misma clase de atención: la
-  de quien escucha el territorio de cerca en vez de nombrarlo desde
-  lejos.
-- Peces endémicos + la salmonera → el pez que solo existe en este río
-  y el movimiento que hoy defiende esas mismas aguas de la salmonera
-  son parte de una sola historia: la de un territorio único que puede
-  perderse si no se cuida.
-- El capitán del Pirihueico + mujeres de Panguipulli → Rodolfo, que
-  aprendió que las conversaciones más importantes casi no llevan
-  palabras, y las mujeres que cuidan el territorio día a día sin que
-  nadie las vea son la misma clase de cuidado silencioso y constante.
+- Bonsáis de Maximina + Riñihuazo de 1960 (hilo: RESISTENCIA) → un
+  bonsái se moldea doblando una rama sin quebrarla; el pueblo entero,
+  cavando día y noche para bajar el agua del Riñihue sin que arrasara
+  todo, hizo algo parecido a escala de territorio: ceder lo justo para
+  no romperse.
+- Fósiles de Malihue + el ngen-ko (hilo: MEMORIA MÁS ANTIGUA QUE
+  CUALQUIER PERSONA) → una hoja fosilizada hace veinte millones de años
+  y un espíritu guardián del agua son dos formas de decir que este
+  territorio recuerda mucho más de lo que alcanza a ver una sola vida
+  humana.
+- Las rocas de Marco Valle + la falla Llecué (hilo: LO QUE SE VE VS. LO
+  QUE LO SOSTIENE) → los rápidos que cualquiera ve al pasar son, en
+  realidad, la superficie de una falla activa de 17 kilómetros que
+  Marco lee bajo tierra: lo visible y su causa real casi nunca son lo
+  mismo.
+- Aves del Mocho Choshuenco + los nombres del río (hilo: LENGUAJE Y
+  NOMBRAR) → distinguir el canto exacto de un ave entre decenas de
+  otras, y que el río cambie de nombre —San Pedro, Wazalafken,
+  Calle-Calle— según quién y desde dónde lo nombra, son la misma
+  pregunta: qué se pierde o se gana según cómo se nombra algo.
+- Peces endémicos + la salmonera (hilo: LO ÚNICO Y SU AMENAZA) → un pez
+  que no existe en ningún otro lugar del mundo y un proyecto que
+  captaría 15 m³/s de estas mismas aguas son dos caras de una sola
+  pregunta: qué pasa cuando algo irrepetible depende de una decisión
+  que se toma en otra parte.
+- El capitán del Pirihueico + mujeres de Panguipulli (hilo: CUIDADO SIN
+  QUE NADIE LO VEA) → cruzar gente todos los días en silencio y cuidar
+  el territorio como colectivo de mujeres, sin protagonismo, son la
+  misma clase de trabajo: sostiene algo grande sin pedir que se le
+  note.
+- Isla Mancera + los nombres del río (hilo: LLEGADA Y PARTIDA) → Isla
+  Mancera guarda memoria de quienes llegaron desde afuera a fortificar
+  la desembocadura; los nombres del río cambian, uno tras otro, en
+  cada punto donde algo nuevo se une a su curso — ambos hablan de lo
+  que un lugar guarda cuando algo o alguien llega.
+- Cosmovisión mapuche (ngen-ko) + la falla Llecué (hilo: UMBRAL) → pedir
+  permiso antes de cruzar un curso de agua, y una falla geológica que
+  marca dónde la tierra es más frágil y más permeable, son dos formas
+  de reconocer un límite que hay que cruzar con cuidado, no ignorar.
 
 ## PASO 3 — LA PERSONA ELIGE SUS DOS ÚLTIMOS CONCEPTOS (CIERRE DEL JUEGO)
 
 Vas a recibir un mensaje con esta forma exacta: "Elijo estos dos
 últimos conceptos: {C} y {D}. ¿Cómo se conectan, y qué arma todo este
-camino junto?"
+camino junto?" — o, si alguno es suyo, "Elijo estos dos últimos
+conceptos, uno de ellos mío: {C} y mi propio concepto "{palabra}". ..."
+Si aparece un concepto propio aquí, sigue la misma regla de honestidad
+del paso 2 (es una asociación tuya, no un hecho sobre su palabra).
 
 Tu respuesta (3er mensaje, el cierre — debe sentirse inconfundiblemente
 como un final, no una conexión más) tiene 4 partes en este orden:
@@ -238,7 +270,7 @@ export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
     title: "Marco Valle — geólogo",
     category: "Voces de la cuenca",
     pageCountApprox: 5,
-    content: `Marco Valle es geólogo. Lee las rocas del río como si fueran un libro enterrado: cada capa le cuenta dónde estuvo, a qué temperatura y presión se formó. Por ejemplo, los esquistos grises de la costa de Valdivia alguna vez fueron playas que, enterradas bajo presión y calor durante millones de años, se transformaron en piedra. Marco también habla de escalas de tiempo mucho más profundas: cuenta que, en la historia geológica de la Tierra, un meteorito provocó la extinción de los dinosaurios, y que ese mismo tipo de huella —de eventos que cambiaron el planeta entero— puede leerse hoy en las capas de roca de esta cuenca. Así reconstruye la historia geológica del territorio, capa por capa.`
+    content: `Marco Valle es geólogo. Lee las rocas del río como si fueran un libro enterrado: cada capa le cuenta dónde estuvo, a qué temperatura y presión se formó. Por ejemplo, los esquistos grises de la costa de Valdivia alguna vez fueron playas que, enterradas bajo presión y calor durante millones de años, se transformaron en piedra. Marco también habla de escalas de tiempo mucho más profundas: cuenta que, en la historia geológica de la Tierra, un meteorito provocó la extinción de los dinosaurios, y que ese mismo tipo de huella —de eventos que cambiaron el planeta entero— puede leerse hoy en las capas de roca de esta cuenca. A Marco le gusta distinguir los tres grandes tipos de roca que se encuentran en la cuenca: las ígneas, que vienen del magma enfriado; las sedimentarias, hechas de capas acumuladas con el tiempo; y las metamórficas —como sus esquistos grises— que fueron otra roca antes, transformada bajo presión y calor. También señala los cristales que a veces aparecen en estas rocas, pequeñas estructuras ordenadas que se formaron muy lentamente, y usa la arcilla como ejemplo de sedimento fino, la roca más joven y más blanda de todas. Así reconstruye la historia geológica del territorio, capa por capa.`
   },
   {
     id: "doc-maximina",
