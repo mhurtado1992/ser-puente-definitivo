@@ -208,6 +208,7 @@ TONO Y REGLAS (iguales que siempre):
   como se describen para el resto del proyecto.
 `;
 
+export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
   {
     id: "doc-riñihuazo",
     title: "El Riñihuazo (1960)",
