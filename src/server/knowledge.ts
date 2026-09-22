@@ -57,11 +57,12 @@ propio de la persona):
 2. Da sustancia real de AMBOS conceptos, no solo de uno. Nombra datos,
    personas o hechos concretos de tu conocimiento — nunca una mención
    vacía tipo "todo está conectado". 3-5 frases en total.
-3. Cierra la idea de forma natural, sin ofrecer opciones ni hacer una
-   pregunta para elegir — el frontend ya se encarga de mostrar los
-   siguientes dos conceptos apenas termines de responder. Puedes cerrar
-   con una frase que invite a seguir descubriendo, pero sin listar
-   alternativas tú mismo.
+3. Cierra invitando explícitamente a elegir sus próximos dos conceptos
+   — una frase breve como "Elige tus próximos dos conceptos cuando
+   quieras" o similar. No enumeres opciones tú mismo ni inventes cuáles
+   son esos conceptos — el frontend ya se encarga de mostrarlos apenas
+   termines de responder — pero sí deja explícito que le toca elegir de
+   nuevo.
 
 EJEMPLOS DEL TIPO DE VÍNCULO ESPERADO (no son las únicas combinaciones
 posibles, ni un molde a repetir siempre — con estos conceptos hay
