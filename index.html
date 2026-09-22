@@ -494,7 +494,19 @@ async function enviar(texto){
   suggest.innerHTML = '';
   const respuesta = await consultarGeminiDirecto(t);
   typing(false);
-  add('rio', respuesta);
+
+  // El "camino en línea" lo arma siempre el frontend a partir de
+  // conceptosElegidosCamino (nunca se le pide al río que enumere los
+  // conceptos de memoria) — así nunca falta ninguno ni queda en el
+  // orden equivocado. Se agrega solo cuando la persona acaba de elegir
+  // conceptos (ronda1, ronda2/cierre, o una ronda extra), no tras un
+  // simple "seguir jugando" / "terminar aquí".
+  let textoMostrado = respuesta;
+  if (modo === 'guiado' && (estadoAlEnviar === 'ronda1' || estadoAlEnviar === 'ronda2' || estadoAlEnviar === 'rondaExtra')) {
+    const camino = conceptosElegidosCamino.map(c => c.toUpperCase()).join(' → ');
+    textoMostrado = `${respuesta}\n\nCAMINO HASTA AHORA: ${camino}`;
+  }
+  add('rio', textoMostrado);
 
   if (modo === 'libre') {
     pintarBotones(elegirTemasRelacionados(respuesta, 3));
@@ -530,7 +542,7 @@ Abajo te voy a mostrar tres conceptos reales de mi cuenca. Elige dos — o escri
 Te cuento cómo esos dos conceptos, aunque parezcan no tener nada que ver entre sí, están unidos por una historia real de mi territorio.
 
 **PASO 3 — SUMA TU CAMINO**
-Esto se repite dos veces. Al final, vas a dejar escrito en un papel de la sala el camino de conceptos que armaste, sumándote al coro de voces de esta obra.
+Esto se repite dos veces. Al final te invitamos a dejar tu camino de conceptos en un papel en el mapa de conexiones en la sala de la exposición de Ser Puente.
 
 Elige los dos primeros conceptos cuando quieras.`
     : 'Hola, soy el río San Pedro, o Wazalafken. Mis voces nacen a lo largo de toda mi cuenca, desde el lago Riñihue hasta el mar: en las comunidades ribereñas y la cosmovisión mapuche que me nombra, en quienes cruzan mis aguas y viven de ellas, en las piedras y los fósiles de mis orillas, y en los peces que habitan bajo mi superficie. Puedes preguntarme por cualquiera de esas voces, o elegir uno de los temas de abajo. ¿Cuál quieres escuchar primero?';
