@@ -382,10 +382,10 @@ export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
   },
   {
     id: "doc-guerrilla-neltume",
-    title: "La guerrilla de Neltume (1981)",
+    title: "La guerrilla de Neltume (1980-1981)",
     category: "Historia y Memoria",
     pageCountApprox: 6,
-    content: `Entre junio y noviembre de 1981, un grupo de alrededor de 25 militantes del MIR —el Destacamento Guerrillero Toqui Lautaro— se instaló clandestinamente en los bosques cercanos a Neltume, como parte de un plan para resistir a la dictadura conocido como "Operación Retorno". El campamento fue descubierto por el Ejército el 27 de junio de 1981, dando paso a una persecución de varios meses que terminó en noviembre con la muerte, detención o desaparición de casi todos sus integrantes. Hoy el Museo Neltume conserva la memoria de ese episodio en la misma precordillera donde ocurrió.`
+    content: `Desde 1980, un grupo de militantes del MIR formados en el exilio —el Destacamento Guerrillero Toqui Lautaro, liderado por Miguel Cabrera Fernández, "Paine"— se internó clandestinamente en la cordillera de Neltume, como parte de un plan para resistir a la dictadura conocido como "Plan 78" u "Operación Retorno". El campamento fue detectado por fuerzas represivas el 27 de junio de 1981, dando paso a una persecución de meses en la montaña: once combatientes murieron entre septiembre y noviembre de ese año, varios de ellos ejecutados cerca de Liquiñe y en el sector de Remeco Alto. Hoy un museo en el pueblo de Neltume conserva la memoria de ese episodio, junto con la del Complejo Maderero Panguipulli y la represión posterior al golpe de 1973.`
   },
   {
     id: "doc-mujeres-magicas",
@@ -393,5 +393,96 @@ export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
     category: "Voces de la cuenca",
     pageCountApprox: 5,
     content: `El Teatro Educativo de las Artes de Panguipulli (TEAP) se inauguró a orillas del lago Panguipulli con una orquesta de 130 niños y niñas sobre el escenario. Alrededor de esa orquesta se formó un grupo de madres, amigas y familiares que hoy se conoce como "Mujeres Mágicas": trabajan de forma voluntaria cosiendo y manteniendo el vestuario y todos los elementos de las obras musicales del teatro, y hoy cuentan con su propio taller en las dependencias del TEAP. Este mismo grupo confeccionó el vestuario de la obra "El Riñihuazo", escrita por Felipe Castro y protagonizada por actores de Panguipulli y Valdivia.`
+  },
+  {
+    id: "doc-movilizacion-ciudadana",
+    title: "El Movimiento Ciudadano Río San Pedro sin Salmoneras",
+    category: "Ecología y Conflicto Socioambiental",
+    pageCountApprox: 5,
+    content: `El Movimiento Ciudadano "Río San Pedro sin Salmoneras" nace en noviembre de 2024 en la comuna de Los Lagos, cuando la comunidad se entera de que la empresa Salmones Antártica S.A. —de capitales japoneses— busca reactivar un proyecto de piscicultura amparado en una Resolución de Calificación Ambiental (RCA) de 2008, hoy considerada obsoleta tras casi veinte años sin ejecutarse. El proyecto contempla captar 15 m³/s de agua del cauce. La vocera y abogada del movimiento, Ornella De Pablo, ha llevado la disputa a tribunales: un recurso de protección logró paralizar temporalmente las obras preliminares durante 2025, aunque la Corte Suprema rechazó después otro recurso presentado en su contra, por lo que la batalla legal sigue abierta. La causa también sumó el hallazgo de fósiles vegetales de hasta 39 millones de años en el sector de la bocatoma, y una 'flotada fluvial' en febrero de 2026, donde más de 100 embarcaciones navegaron por Valdivia reivindicando al río como Wazalafken, un cuerpo de agua vivo.`
+  },
+  {
+    id: "doc-norma-secundaria",
+    title: "La Norma Secundaria de Calidad Ambiental del río Valdivia",
+    category: "Ecología y Gobernanza Hídrica",
+    pageCountApprox: 4,
+    content: `A diferencia de la norma primaria de calidad del agua —que solo mide compuestos tóxicos para resguardar la salud humana—, la Norma Secundaria de Calidad Ambiental protege la integridad del ecosistema acuático mismo: peces nativos, microalgas e invertebrados. Tras casi veinte años de tramitación desde el desastre ambiental del río Cruces en 2004 —incluida una versión de 2015 que la Corte Suprema dejó sin efecto por falta de fundamentación—, la norma para la cuenca del río Valdivia fue finalmente aprobada por unanimidad el 5 de abril de 2024, siendo la séptima de este tipo en todo Chile. Establece el monitoreo de 15 parámetros como pH, oxígeno y nitrógeno, aunque no contempla sanciones ni mide antibióticos o detergentes. La Dra. Nicole Colin, ecóloga de ríos de la Universidad Austral de Chile, ha señalado públicamente que el río San Pedro alberga especies endémicas y amenazadas como el tollo de agua dulce y el huillín, lo que hace indispensable protegerlo.`
+  },
+  {
+    id: "doc-liquenes-sotobosque",
+    title: "Líquenes, musgos y la medicina del sotobosque",
+    category: "Biodiversidad y Botánica",
+    pageCountApprox: 3,
+    content: `En la penumbra del sotobosque de la cuenca, la vegetación no vascular actúa como bioindicador de la salud del aire. La presencia abundante de líquenes epífitos conocidos popularmente como "barba de viejo" (género Usnea) señala aire limpio y la cercanía de vertientes prístinas; además, tienen uso tradicional como antimicóticos y antibacterianos para sanar heridas. A nivel de suelo, musgos como el "pinito del bosque" y las turberas de pompones funcionan como esponjas naturales: absorben la lluvia y filtran el agua que baja de la montaña, ayudando a que las vertientes lleguen limpias al río.`
+  },
+  {
+    id: "doc-ganso-solitario",
+    title: "El ganso solitario de la desembocadura del Riñihue",
+    category: "Relatos del territorio",
+    pageCountApprox: 2,
+    content: `En la desembocadura del lago Riñihue, donde nace el río San Pedro, vive un ganso doméstico blanco que se ha vuelto un personaje querido entre pescadores y vecinos del sector. Según relatos locales, el ave llegó hace años junto a su compañera, tras escaparse de un predio cercano; cuando cazadores furtivos mataron a la hembra, el ganso se quedó en el lugar y se adaptó por completo a la vida silvestre. No se deja atrapar, nada rápido entre la orilla y los islotes, come algas y hierbas acuáticas, y tiene sus rocas favoritas para posarse. Para la comunidad de pescadores, su figura solitaria en el agua se ha vuelto un pequeño símbolo del arraigo y la resistencia cotidiana del territorio.`
+  },
+  {
+    id: "doc-volcanes-geodinamica",
+    title: "Volcanes y geodinámica: el complejo Mocho-Choshuenco",
+    category: "Geología y Paisaje",
+    pageCountApprox: 6,
+    content: `El paisaje de la cuenca es obra de tres fuerzas geológicas actuando juntas: tectonismo, glaciación y volcanismo. El complejo volcánico Mocho-Choshuenco, de composición andesítica y basáltica, domina la cordillera con un edificio doble, y su glaciar alimenta de forma constante los lagos y ríos de la zona. Como este volcán no ha tenido erupciones recientes, la carga de cenizas en el agua se mantiene baja, lo que ayuda a explicar la notable transparencia del río San Pedro. Todo esto ocurre porque la placa de Nazca se hunde bajo la sudamericana en el Cinturón de Fuego del Pacífico, generando la presión que deforma la roca y sostiene el levantamiento de los Andes en esta latitud.`
+  },
+  {
+    id: "doc-balseo-maderero",
+    title: "El balseo maderero, antigua vía de transporte del río",
+    category: "Oficios y Memoria Fluvial",
+    pageCountApprox: 5,
+    content: `Entre 1930 y 1960, antes de que hubiera caminos continuos, el río San Pedro era la principal vía para sacar la madera del bosque nativo precordillerano. Los balseros armaban plataformas flotantes atando tablones aserrados y emprendían un viaje de 15 a 20 días desde Los Lagos hasta el puerto de Valdivia, guiando la balsa entre rápidos con nombres propios como "El Reloj", "El Toro" y "La Vuelta de El Reloj" — tan fuertes que colgaban los víveres en horquetas altas para que la corriente no se los llevara cuando la balsa quedaba bajo el agua. De ese oficio quedan huellas en antiguos puntos de cruce, como el Balseo San Javier en Antilhue y el Balseo San Pedro en Los Ciruelos.`
+  },
+  {
+    id: "doc-navegacion-pirihueico",
+    title: "La navegación en el lago Pirihueico",
+    category: "Oficios y Territorio",
+    pageCountApprox: 5,
+    content: `La navegación del lago Pirihueico conecta los pasos fronterizos con Puerto Fuy y Neltume. Capitanes como Rodolfo Hernández, a bordo de la barcaza "Guajú", trabajan turnos de 14 días embarcados por 14 de descanso. Los marineros describen el Pirihueico como un lago traicionero que "se comporta como una culebra": el viento Puelche, encajonado entre los cerros, puede levantar marejadas sin aviso. En pasos angostos como Punta Vuelta Redonda, la guardia en el puente de mando combina radar y cartas electrónicas con la lectura visual de la silueta de la montaña, sobre todo en las noches sin luna.`
+  },
+  {
+    id: "doc-biomimesis-naval",
+    title: "Biomímesis naval: la naturaleza como maestra de la navegación",
+    category: "Ciencia y Saberes Marítimos",
+    pageCountApprox: 3,
+    content: `Entre los marineros del territorio, la tecnología naval se entiende como algo aprendido de observar a los animales. El radar de un barco funciona con el mismo principio que la ecolocalización de los murciélagos: emiten una señal que rebota en los obstáculos para orientarse en la oscuridad. De forma parecida, el bulbo de proa —esa protuberancia bajo la punta de los barcos modernos— se diseñó imitando la forma hidrodinámica de las ballenas, reduciendo la resistencia del agua y ahorrando combustible.`
+  },
+  {
+    id: "doc-fuerte-mancera",
+    title: "El Fuerte San Pedro de Alcántara, Isla Mancera",
+    category: "Historia Colonial y Patrimonio",
+    pageCountApprox: 6,
+    content: `Construido en 1645 en la desembocadura de la cuenca, el Fuerte San Pedro de Alcántara en Isla Mancera formaba parte del sistema defensivo español que protegía el acceso al puerto de Valdivia. Sus ruinas conservan el dormitorio del Virrey, la iglesia San Antonio de Padua, dependencias jesuitas, y el llamado "Túnel de los Castigados": un calabozo subterráneo con una sola rendija de luz, donde se encerraba a prisioneros e indígenas rebeldes. La isla guarda también su nombre huilliche, "Güiguacabin" ("silbido del viento"), y la memoria de sus cuatro familias colonas fundadoras: los Risco, Bohórquez, Bravo y Marcos.`
+  },
+  {
+    id: "doc-vapor-enco",
+    title: "El vapor Enco y la Hostería Pirihueico",
+    category: "Historia y Cultura Local",
+    pageCountApprox: 5,
+    content: `El vapor Enco, construido en 1914 para la Primera Guerra Mundial, terminó su viaje muy lejos de cualquier frente de batalla: llegó desmontado en tren hasta la zona de Panguipulli, donde más de 300 trabajadores lo subieron a pulso por la montaña para botarlo en el lago. Servía a los visitantes de la antigua Hostería Pirihueico con un comedor de primera clase, cristalería fina y vajilla de plata — mientras compartía esas mismas aguas con las canoas de una sola pieza (wampos) de las comunidades originarias, que sufrían hostigamiento y eran hundidas a balazos para impedir su navegación. El dramaturgo Felipe Castro rescató esta memoria en la obra "Hostería Pirihueico, una utopía en los lagos del sur", montada con actores de la zona.`
+  },
+  {
+    id: "doc-teatro-panguipulli",
+    title: "El Teatro Educativo de las Artes de Panguipulli (TEAP)",
+    category: "Arte y Comunidad",
+    pageCountApprox: 6,
+    content: `El Teatro Educativo de las Artes de Panguipulli (TEAP) nació del trabajo de Pamela Calsow, quien durante más de 16 años sostuvo como voluntaria la orquesta juvenil de la comuna, presentándose en plazas y playas y trasladando instrumentos incluso en los camiones municipales de aseo. Hoy el TEAP, con fachada de madera que evoca un nido, atiende a miles de estudiantes desde sala cuna hasta enseñanza media y está pensado para recibir también a personas con distintas discapacidades. El dramaturgo Felipe Castro colabora dirigiendo montajes que rescatan la historia local — el vapor Enco, el mundo maderero, el Riñihuazo — buscando lo que él mismo llama "epifanías de cinco minutos" arriba del escenario.`
+  },
+  {
+    id: "doc-rios-subterraneos-valdivia",
+    title: "Ríos subterráneos y catricos bajo Valdivia",
+    category: "Geología Urbana y Memoria Fluvial",
+    pageCountApprox: 4,
+    content: `Valdivia está construida sobre un suelo blando y anfibio: sedimentos, arenas y arcillas glaciares. Bajo la trama urbana corre una red de ríos subterráneos y esteros que localmente se llaman "catricos", que drenan las napas hacia la cuenca principal — y que a veces emergen sin aviso durante la construcción de edificios nuevos. Tras el megaterremoto de 1960, el hundimiento del continente en hasta dos metros dejó permanentemente inundados antiguos catricos y vegas agrícolas, dando origen a buena parte de los humedales urbanos que hoy caracterizan a la ciudad.`
+  },
+  {
+    id: "doc-alfareria-arqueologia",
+    title: "Alfarería Pitrén y Valdivia: huellas arqueológicas del río",
+    category: "Arqueología y Pueblos Originarios",
+    pageCountApprox: 4,
+    content: `En las riberas del río San Pedro, sobre todo en la comuna de Los Lagos, se han encontrado yacimientos y cementerios de comunidades alfareras muy anteriores a la llegada de la industria: piezas de los estilos Pitrén y Valdivia, con vasijas modeladas y jarros simétricos. Estos hallazgos muestran una ocupación continua de la cuenca por pueblos originarios, con prácticas cotidianas ligadas a cocinar con agua del río, recolectar arcilla local, y ritos funerarios donde las vasijas acompañaban a los difuntos a orillas del Wazalafken.`
   }
 ];
