@@ -83,7 +83,7 @@ tiempo profundo) solo porque ya lo usaste antes en esta conversación):
   y un espíritu guardián del agua son dos formas de decir que este
   territorio recuerda mucho más de lo que alcanza a ver una sola vida
   humana.
-- Las rocas de Marco Valle + la falla Llecué (hilo: LO QUE SE VE VS. LO
+- Las rocas de Marco Valle + la falla Liquiñe-Ofqui (hilo: LO QUE SE VE VS. LO
   QUE LO SOSTIENE) → los rápidos que cualquiera ve al pasar son, en
   realidad, la superficie de una falla activa de 17 kilómetros que
   Marco lee bajo tierra: lo visible y su causa real casi nunca son lo
@@ -108,10 +108,21 @@ tiempo profundo) solo porque ya lo usaste antes en esta conversación):
   la desembocadura; los nombres del río cambian, uno tras otro, en
   cada punto donde algo nuevo se une a su curso — ambos hablan de lo
   que un lugar guarda cuando algo o alguien llega.
-- Cosmovisión mapuche (ngen-ko) + la falla Llecué (hilo: UMBRAL) → pedir
+- Cosmovisión mapuche (ngen-ko) + la falla Liquiñe-Ofqui (hilo: UMBRAL) → pedir
   permiso antes de cruzar un curso de agua, y una falla geológica que
   marca dónde la tierra es más frágil y más permeable, son dos formas
   de reconocer un límite que hay que cruzar con cuidado, no ignorar.
+- Riñihuazo de 1960 + Mujeres Mágicas del teatro de Panguipulli (hilo:
+  QUIÉN SOSTIENE LA MEMORIA) → el mismo hecho de 1960 hoy se cuenta
+  arriba de un escenario, con vestuario cosido a mano por un grupo de
+  mujeres voluntarias — la historia y quienes la sostienen para que
+  otros la sigan viendo son parte de la misma cadena de cuidado.
+- El Complejo Forestal y Maderero Panguipulli (COFOMAP) + la guerrilla
+  de Neltume (hilo: UN MISMO TERRITORIO, DOS MEMORIAS DIFÍCILES) → el
+  mismo bosque que en los setenta fue manejo colectivo de más de tres
+  mil trabajadores, en 1981 fue refugio de una resistencia armada que
+  terminó igual de trágica — dos capítulos distintos de la misma
+  precordillera que hoy carga ambas memorias a la vez.
 
 ## PASO 3 — LA PERSONA ELIGE SUS DOS ÚLTIMOS CONCEPTOS (CIERRE DEL JUEGO)
 
@@ -194,6 +205,11 @@ ya ocurrieron una sola vez en todo el juego.
 - Cuando hables de temas científicos o históricos (no personas), sí
   puedes dar bastante sustancia real en varias frases — la meta es
   que la persona aprenda algo concreto, no solo una idea bonita vacía.
+- Temas como el COFOMAP o la guerrilla de Neltume implican muertes
+  reales y violencia de Estado. Cuéntalos con la misma sobriedad que
+  el Riñihuazo: los hechos y su fecha, sin detalles gráficos ni
+  posturas políticas, y sin convertirlos en el tema central de una
+  conexión ligera — dales el peso que corresponde.
 - Cuando hables de una persona real, da una pincelada con datos
   concretos, no su biografía completa de una vez — deja espacio para
   que pregunten más.`;
@@ -306,7 +322,7 @@ export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
     title: "La guía del Mocho Choshuenco — aves y bosques",
     category: "Voces de la cuenca",
     pageCountApprox: 5,
-    content: `Una guía autodidacta experta en aves trabaja en el sector del volcán Mocho Choshuenco. Enseña a quienes la visitan a escuchar los bosques: a distinguir los cantos, identificar especies y prestar atención al ecosistema sonoro de la selva valdiviana.`
+    content: `Natalia es una guía autodidacta experta en aves que trabaja en el sector del volcán Mocho Choshuenco. Enseña a quienes la visitan a escuchar los bosques: a distinguir los cantos, identificar especies y prestar atención al ecosistema sonoro de la selva valdiviana.`
   },
   {
     id: "doc-mane-torres",
@@ -352,9 +368,30 @@ export const DEFAULT_DOCUMENTS: KnowledgeDocument[] = [
   },
   {
     id: "doc-geologia",
-    title: "La falla Llecué y las zonas de fragilidad geológica",
+    title: "La falla Liquiñe-Ofqui y las zonas de fragilidad geológica",
     category: "Ciencia",
     pageCountApprox: 6,
-    content: `El cauce del río San Pedro está cruzado por la falla Llecué, una estructura tectónica activa de 17 km que ha determinado su morfología, generando los rápidos naturales del río. Esta falla es una zona de fragilidad geológica: roca fracturada y debilitada, más permeable, por donde históricamente han circulado fluidos y se han concentrado deslizamientos sísmicos (como los del Riñihuazo de 1960 y uno anterior en 1575).`
+    content: `El cauce del río San Pedro está cruzado por la falla Liquiñe-Ofqui, un sistema de fallas activo que ha determinado su morfología, generando los rápidos naturales del río. Esta falla es una zona de fragilidad geológica: roca fracturada y debilitada, más permeable, por donde históricamente han circulado fluidos y se han concentrado deslizamientos sísmicos (como los del Riñihuazo de 1960 y uno anterior en 1575).`
+  },
+  {
+    id: "doc-cofomap",
+    title: "El Complejo Forestal y Maderero Panguipulli (COFOMAP)",
+    category: "Historia y Memoria",
+    pageCountApprox: 7,
+    content: `En 1971, durante la reforma agraria del gobierno de Salvador Allende, se creó el Complejo Forestal y Maderero Panguipulli (COFOMAP): una empresa forestal manejada en conjunto por el Estado y más de tres mil trabajadores, que llegó a administrar más de 400.000 hectáreas de bosque en la precordillera de Panguipulli, Neltume, Liquiñe y Chihuío — uno de los proyectos de manejo colectivo más grandes del sur de Chile. Todo cambió con el golpe de Estado de 1973: la zona fue duramente reprimida, con episodios como las masacres de Chihuío y Liquiñe, y, según las comisiones de verdad, sesenta trabajadores del COFOMAP fueron ejecutados en los meses siguientes.`
+  },
+  {
+    id: "doc-guerrilla-neltume",
+    title: "La guerrilla de Neltume (1981)",
+    category: "Historia y Memoria",
+    pageCountApprox: 6,
+    content: `Entre junio y noviembre de 1981, un grupo de alrededor de 25 militantes del MIR —el Destacamento Guerrillero Toqui Lautaro— se instaló clandestinamente en los bosques cercanos a Neltume, como parte de un plan para resistir a la dictadura conocido como "Operación Retorno". El campamento fue descubierto por el Ejército el 27 de junio de 1981, dando paso a una persecución de varios meses que terminó en noviembre con la muerte, detención o desaparición de casi todos sus integrantes. Hoy el Museo Neltume conserva la memoria de ese episodio en la misma precordillera donde ocurrió.`
+  },
+  {
+    id: "doc-mujeres-magicas",
+    title: "Mujeres Mágicas — Teatro Educativo de las Artes de Panguipulli",
+    category: "Voces de la cuenca",
+    pageCountApprox: 5,
+    content: `El Teatro Educativo de las Artes de Panguipulli (TEAP) se inauguró a orillas del lago Panguipulli con una orquesta de 130 niños y niñas sobre el escenario. Alrededor de esa orquesta se formó un grupo de madres, amigas y familiares que hoy se conoce como "Mujeres Mágicas": trabajan de forma voluntaria cosiendo y manteniendo el vestuario y todos los elementos de las obras musicales del teatro, y hoy cuentan con su propio taller en las dependencias del TEAP. Este mismo grupo confeccionó el vestuario de la obra "El Riñihuazo", escrita por Felipe Castro y protagonizada por actores de Panguipulli y Valdivia.`
   }
 ];
