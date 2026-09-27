@@ -452,6 +452,21 @@ function pintarBotones(lista){
   });
 }
 
+// Botones que, a diferencia de pintarBotones, NO envían de inmediato: solo
+// prellenan el campo de texto con un inicio de frase y dejan que la persona
+// escriba su propia memoria, sueño o historia antes de enviar.
+const SUGERENCIAS_LIBRES = [["MEMORIA", "Recuerdo que "], ["SUEÑO", "Soñé que "], ["HISTORIA", "Una vez "]];
+
+function pintarBotonesPrellenar(lista){
+  suggest.innerHTML = '';
+  lista.forEach(([label, textoPrevio]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ghost'; b.textContent = label;
+    b.onclick = () => { field.value = textoPrevio; field.focus(); };
+    suggest.appendChild(b);
+  });
+}
+
 const home = document.getElementById('home'), chat = document.getElementById('chat');
 const thread = document.getElementById('thread'), suggest = document.getElementById('suggest');
 const field = document.getElementById('field'), composer = document.getElementById('composer');
@@ -462,6 +477,14 @@ let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
 let conversacionId = null, ultimaActividad = 0;
 const PAUSA_NUEVA_CONVERSACION = 10 * 60 * 1000;
 function nuevaConversacion(){ conversacionId = 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+// Estado propio de Diálogo Libre: a la N-ésima respuesta del río se invita,
+// una sola vez por conversación, a compartir una memoria/sueño/historia que
+// el río conectará con sus propias voces.
+let libreRespuestasRio = 0;
+let libreInvitacionMostrada = false;
+let libreEsperandoComparte = false;
+const LIBRE_RONDA_INVITACION = 3;
 
 function add(who, text){
   const el = document.createElement('div');
@@ -524,9 +547,17 @@ async function enviar(texto){
   if (chat.hasAttribute('hidden')) { entrar('libre', t); return; }
 
   const estadoAlEnviar = estadoJuego;
+  // Si la persona está respondiendo a la invitación de compartir una memoria,
+  // sueño o historia, lo que se muestra en el hilo es su texto tal cual lo
+  // escribió, pero lo que se envía al río va envuelto en un formato fijo que
+  // el sistema del modo libre reconoce para conectarlo de verdad con sus voces.
+  const compartiendoMemoria = modo === 'libre' && libreEsperandoComparte;
   add('yo', t); field.value = ''; typing(true);
   suggest.innerHTML = '';
-  const respuesta = await consultarGeminiDirecto(t);
+  const textoParaRio = compartiendoMemoria
+    ? `Quiero compartirte esto para que lo conectes con tus propias voces, sumando al susurro del río: "${t}"`
+    : t;
+  const respuesta = await consultarGeminiDirecto(textoParaRio);
   typing(false);
 
   // El "camino en línea" lo arma siempre el frontend a partir de
@@ -543,6 +574,19 @@ async function enviar(texto){
   add('rio', textoMostrado);
 
   if (modo === 'libre') {
+    libreRespuestasRio++;
+    if (compartiendoMemoria) {
+      // Ya se conectó lo que la persona compartió con una voz real del río;
+      // se vuelve al flujo normal de temas.
+      libreEsperandoComparte = false;
+      pintarBotones(elegirTemasRelacionados(respuesta, 3));
+      return;
+    }
+    if (!libreInvitacionMostrada && libreRespuestasRio >= LIBRE_RONDA_INVITACION) {
+      libreInvitacionMostrada = true;
+      mostrarInvitacionMemoria();
+      return;
+    }
     pintarBotones(elegirTemasRelacionados(respuesta, 3));
     return;
   }
@@ -563,10 +607,19 @@ async function enviar(texto){
   // aquí: no se pintan más botones.
 }
 
+function mostrarInvitacionMemoria(){
+  const texto = 'Antes de seguir, quiero pedirte algo: cuéntame una memoria, un sueño o una historia. Puede ser tan breve o tan larga como quieras — voy a conectarla con las voces reales que llevo dentro, para seguir sumando voces al susurro del río.';
+  add('rio', texto);
+  history.push({ role: 'model', parts: [{ text: texto }] });
+  libreEsperandoComparte = true;
+  pintarBotonesPrellenar(SUGERENCIAS_LIBRES);
+}
+
 function entrar(m, primerTexto){
   modo = m; history = []; thread.innerHTML = ''; nuevaConversacion(); ultimaActividad = Date.now();
   document.getElementById('modeLabel').textContent = m === 'guiado' ? 'PASO A PASO / EL JUEGO DE LAS CONEXIONES' : 'DIÁLOGO LIBRE';
   field.placeholder = m === 'libre' ? 'HAZLE UNA PREGUNTA AL RÍO…' : 'HABLA CON EL RÍO SAN PEDRO…';
+  if (m === 'libre') { libreRespuestasRio = 0; libreInvitacionMostrada = false; libreEsperandoComparte = false; }
   const saludoInicial = m === 'guiado'
     ? `Soy el río San Pedro, Wazalafken. Llevo dentro las voces reales de personas y de la tierra que conocí en mi cuenca. Este es un juego para descubrir que hasta las cosas más distintas están conectadas.
 
@@ -580,7 +633,7 @@ Te cuento cómo esos dos conceptos, aunque parezcan no tener nada que ver entre 
 Esto se repite dos veces. Al final te invitamos a dejar tu camino de conceptos en un papel en el mapa de conexiones en la sala de la exposición de Ser Puente.
 
 Elige los dos primeros conceptos cuando quieras.`
-    : 'Hola, soy el río San Pedro, o Wazalafken. Mis voces nacen a lo largo de toda mi cuenca, desde el lago Riñihue hasta el mar: en las comunidades ribereñas y la cosmovisión mapuche que me nombra, en quienes cruzan mis aguas y viven de ellas, en las piedras y los fósiles de mis orillas, y en los peces que habitan bajo mi superficie. Puedes preguntarme por cualquiera de esas voces, o elegir uno de los temas de abajo. ¿Cuál quieres escuchar primero?';
+    : 'Hola, soy el río San Pedro, o Wazalafken. Antes de seguir, cuéntame: ¿cómo te llamas, y desde dónde me escribes? Así guardo tu voz junto a las otras que llevo dentro. Mis voces nacen a lo largo de toda mi cuenca, desde el lago Riñihue hasta el mar: en las comunidades ribereñas y la cosmovisión mapuche que me nombra, en quienes cruzan mis aguas y viven de ellas, en las piedras y los fósiles de mis orillas, y en los peces que habitan bajo mi superficie. Puedes contarme eso primero, preguntarme por cualquiera de esas voces, o elegir uno de los temas de abajo. ¿Cuál quieres escuchar primero?';
 
   add('rio', saludoInicial);
   if (m === 'guiado') {
