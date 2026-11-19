@@ -602,7 +602,6 @@ app.post("/api/chat", async (req, res) => {
           });
         }
       }
-      }
     }
 
     // Agregar la consulta del visitante
