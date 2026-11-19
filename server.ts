@@ -135,11 +135,20 @@ const NOMBRES_PROPIOS_NO_TRADUCIR = [
 
 function buildLanguageInstruction(lang?: string): string {
   const quiereIngles = lang === "en";
+  if (quiereIngles) {
+    return `--- RESPONSE LANGUAGE (CRITICAL) ---
+YOU MUST RESPOND IN ENGLISH. This is a hard requirement that overrides everything else,
+including the language of previous messages in the conversation history.
+ALWAYS write your full reply in English, no matter what language the visitor uses
+or what language appears in previous turns. Do NOT switch to Spanish under any circumstance.
+Never translate these proper nouns or Mapudungún terms — keep them exactly as written
+in any response language: ${NOMBRES_PROPIOS_NO_TRADUCIR}.
+--- END RESPONSE LANGUAGE ---`;
+  }
   return `--- IDIOMA DE RESPUESTA ---
-Responde SIEMPRE en ${quiereIngles ? "inglés" : "español"}, sin importar en
-qué idioma escriba la persona visitante. Nunca traduzcas estos nombres
-propios ni términos en mapudungún — escríbelos siempre tal cual, en
-cualquier idioma de respuesta: ${NOMBRES_PROPIOS_NO_TRADUCIR}.
+Responde SIEMPRE en español, sin importar en qué idioma escriba la persona visitante.
+Nunca traduzcas estos nombres propios ni términos en mapudungún — escríbelos siempre
+tal cual: ${NOMBRES_PROPIOS_NO_TRADUCIR}.
 --- FIN IDIOMA DE RESPUESTA ---`;
 }
 
