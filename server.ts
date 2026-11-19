@@ -123,8 +123,28 @@ function getGenAI(): GoogleGenAI {
   return genAIClient;
 }
 
+// Lista de nombres propios y términos que nunca deben traducirse, cualquiera
+// sea el idioma de respuesta elegido por la persona visitante.
+const NOMBRES_PROPIOS_NO_TRADUCIR = [
+  "San Pedro", "Wazalafken", "Calle-Calle", "Riñihue", "Valdivia", "Niebla",
+  "Panguipulli", "Neltume", "Isla Mancera", "Pirihueico", "Mocho Choshuenco",
+  "COFOMAP", "Malihue", "Liquiñe-Ofqui", "ngen-ko", "catricos", "Riñihuazo",
+  "Marco Valle", "Maximina", "Rodolfo", "Pamela Calsow", "Felipe Castro",
+  "Mujeres Mágicas", "Ser Puente",
+].join(", ");
+
+function buildLanguageInstruction(lang?: string): string {
+  const quiereIngles = lang === "en";
+  return `--- IDIOMA DE RESPUESTA ---
+Responde SIEMPRE en ${quiereIngles ? "inglés" : "español"}, sin importar en
+qué idioma escriba la persona visitante. Nunca traduzcas estos nombres
+propios ni términos en mapudungún — escríbelos siempre tal cual, en
+cualquier idioma de respuesta: ${NOMBRES_PROPIOS_NO_TRADUCIR}.
+--- FIN IDIOMA DE RESPUESTA ---`;
+}
+
 // Build context dynamically based on retrieval mode
-function compileContext(userQuery?: string, mode?: string): string {
+function compileContext(userQuery?: string, mode?: string, lang?: string): string {
   let docsText = "";
 
   if (retrievalMode === "smart_rag" && docIndex.totalChunks > 0) {
@@ -148,6 +168,8 @@ function compileContext(userQuery?: string, mode?: string): string {
   const baseInstruction = mode === "libre" ? FREE_INITIAL_SYSTEM_INSTRUCTION : activeSystemInstruction;
 
   return `${baseInstruction}
+
+${buildLanguageInstruction(lang)}
 
 --- BASE DE CONOCIMIENTO Y VOCES REALES DE LA CUENCA DEL RÍO SAN PEDRO (TESTIMONIOS, HISTORIA Y ARCHIVOS) ---
 ${docsText}
@@ -552,7 +574,7 @@ app.post("/api/documents/reset", (_req, res) => {
 // Main Chat Endpoint
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, mode, history, systemInstruction, conversationId } = req.body;
+    const { message, mode, history, systemInstruction, conversationId, lang } = req.body;
 
     if (!message || typeof message !== "string") {
       res.status(400).json({ error: "El mensaje es requerido." });
@@ -563,7 +585,7 @@ app.post("/api/chat", async (req, res) => {
 
     // El contexto base ya elige el prompt correcto según el modo
     // ("libre" usa el diálogo libre, cualquier otro valor usa el juego)
-    const baseContextDocs = compileContext(message, mode);
+    const baseContextDocs = compileContext(message, mode, typeof lang === "string" ? lang : undefined);
     const finalSystemPrompt = systemInstruction || baseContextDocs;
 
     // Mapear historial en formato estándar de Gemini
@@ -579,6 +601,7 @@ app.post("/api/chat", async (req, res) => {
             parts: [{ text: textValue }],
           });
         }
+      }
       }
     }
 
@@ -621,14 +644,23 @@ app.post("/api/chat", async (req, res) => {
     if (!replyText) {
       // Fallback contextual si ningún modelo respondió
       const queryLower = (message || "").toLowerCase();
-      if (queryLower.includes("marco") || queryLower.includes("roca") || queryLower.includes("piedra") || queryLower.includes("geología")) {
-        replyText = "Marco es geólogo y lee mis piedras como si fueran las páginas escritas de la Tierra. Mis esquistos grises se formaron a inmensas presiones bajo la corteza a lo largo de millones de años. ¿Quieres saber sobre los minerales de mi cuenca o prefieres explorar mis especies de peces?";
-      } else if (queryLower.includes("maximina") || queryLower.includes("bonsái") || queryLower.includes("árbol")) {
-        replyText = "La señora Maximina vive cerca de Neltume. Ella cuida bonsáis nativos con la paciencia que enseñan los bosques antiguos, recordando que cada árbol tiene su propia respiración. ¿Te gustaría saber más sobre los árboles de la orilla o sobre los seres subacuáticos?";
-      } else if (queryLower.includes("pez") || queryLower.includes("puye") || queryLower.includes("peladilla") || queryLower.includes("salmonera")) {
-        replyText = "En la oscuridad de mis corrientes habitan peces únicos como los puyes y las peladillas. Son habitantes antiguos que hoy enfrentan la amenaza de la industria salmonera. Mantener mi cauce libre es proteger su universo bajo el agua.";
+      const esIngles = lang === "en";
+      if (queryLower.includes("marco") || queryLower.includes("roca") || queryLower.includes("piedra") || queryLower.includes("geología") || queryLower.includes("geology") || queryLower.includes("rock")) {
+        replyText = esIngles
+          ? "Marco is a geologist and reads my stones like pages written by the Earth itself. My grey schists formed under immense pressure beneath the crust over millions of years. Would you like to know about the minerals in my basin, or explore my fish species instead?"
+          : "Marco es geólogo y lee mis piedras como si fueran las páginas escritas de la Tierra. Mis esquistos grises se formaron a inmensas presiones bajo la corteza a lo largo de millones de años. ¿Quieres saber sobre los minerales de mi cuenca o prefieres explorar mis especies de peces?";
+      } else if (queryLower.includes("maximina") || queryLower.includes("bonsái") || queryLower.includes("bonsai") || queryLower.includes("árbol") || queryLower.includes("tree")) {
+        replyText = esIngles
+          ? "Maximina lives near Neltume. She tends native bonsai trees with the same patience the old forests teach, remembering that every tree has its own breath. Would you like to know more about the trees on my banks, or the creatures beneath my surface?"
+          : "La señora Maximina vive cerca de Neltume. Ella cuida bonsáis nativos con la paciencia que enseñan los bosques antiguos, recordando que cada árbol tiene su propia respiración. ¿Te gustaría saber más sobre los árboles de la orilla o sobre los seres subacuáticos?";
+      } else if (queryLower.includes("pez") || queryLower.includes("fish") || queryLower.includes("puye") || queryLower.includes("peladilla") || queryLower.includes("salmonera") || queryLower.includes("salmon")) {
+        replyText = esIngles
+          ? "Unique fish like the puyes and peladillas live in the darkness of my currents. They are ancient inhabitants now facing the threat of the salmon farming industry. Keeping my course free is protecting their world beneath the water."
+          : "En la oscuridad de mis corrientes habitan peces únicos como los puyes y las peladillas. Son habitantes antiguos que hoy enfrentan la amenaza de la industria salmonera. Mantener mi cauce libre es proteger su universo bajo el agua.";
       } else {
-        replyText = "Mis aguas corren con fuerza llevando las voces de la tierra, la geología de Marco, la sabiduría de los árboles de Maximina y el nado silencioso de mis peces endémicos. ¿Qué parte de mi cauce te gustaría explorar hoy?";
+        replyText = esIngles
+          ? "My waters run strong, carrying the voices of the land, Marco's geology, the wisdom of Maximina's trees, and the silent swimming of my endemic fish. Which part of my course would you like to explore today?"
+          : "Mis aguas corren con fuerza llevando las voces de la tierra, la geología de Marco, la sabiduría de los árboles de Maximina y el nado silencioso de mis peces endémicos. ¿Qué parte de mi cauce te gustaría explorar hoy?";
       }
     }
 
