@@ -51,6 +51,13 @@
            padding:11px 16px; min-height:40px; font-size:9px; font-weight:500; letter-spacing:.16em;
            transition:background 180ms ease,color 180ms ease; }
 
+  .lang-toggle { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .lang-toggle button { cursor:pointer; background:transparent; color:inherit; font:inherit; border:0; padding:0;
+           font-size:9px; font-weight:500; letter-spacing:.16em; opacity:.4; transition:opacity 180ms ease; }
+  .lang-toggle button:hover { opacity:.75; }
+  .lang-toggle button.active { opacity:1; }
+  .lang-toggle .lang-sep { font-size:9px; letter-spacing:.16em; opacity:.3; }
+
   .thread { flex:1; min-height:240px; overflow-y:auto; display:flex; flex-direction:column; }
   .msg { display:flex; flex-direction:column; gap:12px; border-bottom:1px solid rgba(43,60,219,.28);
          padding:clamp(18px,2.4vw,28px) clamp(16px,2.2vw,28px); }
@@ -116,39 +123,44 @@
       <div class="bar" data-reveal style="animation-delay:0ms">
         <span class="wordmark secret-trigger" title="Ser Puente"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNIDAgMTAwIEEgMTAwIDEwMCAwIDAgMSAyMDAgMTAwIEggMTY4IEEgNjggNjggMCAwIDAgMzIgMTAwIFoiIGZpbGw9IiMyYjNjZGIiIC8+Cjwvc3ZnPgo=" alt="" aria-hidden="true">SER PUENTE</span>
         <div class="nav">
-          <button type="button" class="ghost" id="openAboutBtn" style="padding:10px 16px; min-height:40px;">SOBRE LA OBRA</button>
+          <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+            <button type="button" class="lang-btn" data-lang="es">ES</button>
+            <span class="lang-sep" aria-hidden="true">/</span>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+          </div>
+          <button type="button" class="ghost" id="openAboutBtn" style="padding:10px 16px; min-height:40px;" data-i18n="about_btn">SOBRE LA OBRA</button>
         </div>
       </div>
 
       <div class="intro" data-reveal style="animation-delay:120ms">
         <div class="col">
-          <span class="micro b">VOCES DEL RÍO</span>
-          <span class="micro">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
+          <span class="micro b" data-i18n="tagline">VOCES DEL RÍO</span>
+          <span class="micro" data-i18n-html="subtitle_html">MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN</span>
         </div>
         <div class="col">
-          <span class="micro">POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE</span>
+          <span class="micro" data-i18n-html="byline_html">POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE</span>
         </div>
       </div>
 
-      <img id="rio" class="hero" data-reveal style="animation-delay:220ms" src="/rio.jpg" alt="El río San Pedro">
+      <img id="rio" class="hero" data-reveal style="animation-delay:220ms" src="/rio.jpg" alt="El río San Pedro" data-i18n-alt="hero_alt">
 
       <div class="pad" data-reveal style="border-bottom:1px solid var(--rule); animation-delay:340ms">
-        <p class="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
+        <p class="curatorial" data-i18n="curatorial">Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?</p>
       </div>
 
       <div id="voces" class="cells" data-reveal style="animation-delay:460ms">
         <button type="button" class="cell" data-mode="guiado">
-          <span class="label">PASO A PASO</span>
-          <span class="micro">EL JUEGO DE<br>LAS CONEXIONES</span>
-          <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
+          <span class="label" data-i18n="mode_guided_label">PASO A PASO</span>
+          <span class="micro" data-i18n-html="mode_guided_desc_html">EL JUEGO DE<br>LAS CONEXIONES</span>
+          <span class="pill"><span data-i18n="enter_btn">ENTRAR</span> <span style="font-size:11px;">→</span></span>
         </button>
         <button type="button" class="cell" data-mode="libre">
-          <span class="label">DIÁLOGO LIBRE</span>
-          <span class="micro">EXPLORA LAS<br>VOCES DEL RÍO</span>
-          <span class="pill">ENTRAR <span style="font-size:11px;">→</span></span>
+          <span class="label" data-i18n="mode_free_label">DIÁLOGO LIBRE</span>
+          <span class="micro" data-i18n-html="mode_free_desc_html">EXPLORA LAS<br>VOCES DEL RÍO</span>
+          <span class="pill"><span data-i18n="enter_btn">ENTRAR</span> <span style="font-size:11px;">→</span></span>
         </button>
         <div id="obra" class="empty">
-          <p>Las respuestas de este chat se basan en 38 entrevistas reales, recogidas durante una residencia de investigación artística en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar. Lo que converses aquí se suma a ese mismo archivo de voces — no es una conversación privada.</p>
+          <p data-i18n="archive_note">Las respuestas de este chat se basan en 38 entrevistas reales, recogidas durante una residencia de investigación artística en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar. Lo que converses aquí se suma a ese mismo archivo de voces — no es una conversación privada.</p>
         </div>
       </div>
     </div>
@@ -166,8 +178,8 @@
     </div>
 
     <form class="composer" id="composer">
-      <input id="field" type="text" placeholder="HABLA CON EL RÍO SAN PEDRO…" aria-label="Habla con el río San Pedro">
-      <button type="submit" id="sendBtn">ENVIAR</button>
+      <input id="field" type="text" placeholder="HABLA CON EL RÍO SAN PEDRO…" aria-label="Habla con el río San Pedro" data-i18n-placeholder="composer_placeholder">
+      <button type="submit" id="sendBtn" data-i18n="send_btn">ENVIAR</button>
     </form>
   </div>
 </div>
@@ -473,6 +485,65 @@ const field = document.getElementById('field'), composer = document.getElementBy
 const curatorModal = document.getElementById('curatorModal'), aboutModal = document.getElementById('aboutModal');
 const voicesLogContainer = document.getElementById('voicesLogContainer');
 
+// --- Idioma / Language (home) ---------------------------------------------
+const I18N = {
+  es: {
+    page_title: 'Ser Puente — Voces del río',
+    about_btn: 'SOBRE LA OBRA',
+    tagline: 'VOCES DEL RÍO',
+    subtitle_html: 'MEMORIAS DEL RÍO<br>SAN PEDRO / WAZALAFKEN',
+    byline_html: 'POR MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE',
+    hero_alt: 'El río San Pedro',
+    curatorial: 'Mis aguas nacen en el lago Riñihue y viajan llevando las voces de las comunidades ribereñas, las piedras, la vida subacuática y los rápidos que defienden mi curso libre. Cuando develamos las conexiones que existen entre las cosas, dejamos de percibirnos como individuos aislados y empezamos a reconocernos como parte de una red. Siéntate a mi orilla… ¿qué deseas saber?',
+    mode_guided_label: 'PASO A PASO',
+    mode_guided_desc_html: 'EL JUEGO DE<br>LAS CONEXIONES',
+    mode_free_label: 'DIÁLOGO LIBRE',
+    mode_free_desc_html: 'EXPLORA LAS<br>VOCES DEL RÍO',
+    enter_btn: 'ENTRAR',
+    archive_note: 'Las respuestas de este chat se basan en 38 entrevistas reales, recogidas durante una residencia de investigación artística en un recorrido que siguió el río San Pedro (Wazalafken) desde la cordillera hasta el mar. Lo que converses aquí se suma a ese mismo archivo de voces — no es una conversación privada.',
+    composer_placeholder: 'HABLA CON EL RÍO SAN PEDRO…',
+    send_btn: 'ENVIAR',
+  },
+  en: {
+    page_title: 'Ser Puente — Voices of the River',
+    about_btn: 'ABOUT THE WORK',
+    tagline: 'VOICES OF THE RIVER',
+    subtitle_html: 'MEMORIES OF THE<br>SAN PEDRO / WAZALAFKEN RIVER',
+    byline_html: 'BY MARÍA HURTADO IZQUIERDO<br>2026 / VALDIVIA, CHILE',
+    hero_alt: 'The San Pedro River',
+    curatorial: 'My waters are born in Lake Riñihue and travel carrying the voices of the riverside communities, the stones, the underwater life, and the rapids that defend my free course. When we uncover the connections that exist between things, we stop seeing ourselves as isolated individuals and begin to recognize ourselves as part of a network. Sit by my shore… what do you wish to know?',
+    mode_guided_label: 'STEP BY STEP',
+    mode_guided_desc_html: 'THE GAME OF<br>CONNECTIONS',
+    mode_free_label: 'FREE DIALOGUE',
+    mode_free_desc_html: 'EXPLORE THE<br>VOICES OF THE RIVER',
+    enter_btn: 'ENTER',
+    archive_note: 'The responses in this chat are based on 38 real interviews, gathered during an artistic research residency on a journey that followed the San Pedro River (Wazalafken) from the mountains to the sea. What you share here becomes part of that same archive of voices — this is not a private conversation.',
+    composer_placeholder: 'SPEAK WITH THE SAN PEDRO RIVER…',
+    send_btn: 'SEND',
+  },
+};
+
+let currentLang = 'es';
+try {
+  const savedLang = localStorage.getItem('serpuente_lang');
+  if (savedLang === 'es' || savedLang === 'en') currentLang = savedLang;
+} catch (e) {}
+
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.es[key] || key;
+}
+
+function applyLanguage(){
+  document.documentElement.lang = currentLang;
+  document.title = t('page_title');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => { el.alt = t(el.dataset.i18nAlt); });
+  document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === currentLang); });
+  try { localStorage.setItem('serpuente_lang', currentLang); } catch (e) {}
+}
+
 let modo = 'libre', history = [], clickCount = 0, listaVocesPublico = [];
 let conversacionId = null, ultimaActividad = 0;
 const PAUSA_NUEVA_CONVERSACION = 10 * 60 * 1000;
@@ -761,6 +832,16 @@ document.getElementById('openAboutBtn').addEventListener('click', () => aboutMod
 document.getElementById('closeAboutBtn').addEventListener('click', () => aboutModal.setAttribute('hidden', ''));
 document.getElementById('closeCuratorBtn').addEventListener('click', () => curatorModal.setAttribute('hidden', ''));
 
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (currentLang !== btn.dataset.lang) {
+      currentLang = btn.dataset.lang;
+      applyLanguage();
+    }
+  });
+});
+applyLanguage();
+
 composer.addEventListener('submit', (e) => { e.preventDefault(); enviar(field.value); });
 
 // La línea sobre el buscador solo aparece cuando hay contenido oculto arriba
@@ -775,7 +856,7 @@ thread.addEventListener('scroll', actualizarSombraComposer, { passive: true });
 home.addEventListener('scroll', actualizarSombraComposer, { passive: true });
 actualizarSombraComposer();
 document.querySelectorAll('.cell').forEach(c => c.addEventListener('click', () => entrar(c.dataset.mode)));
-document.getElementById('back').addEventListener('click', () => { chat.style.display = 'none'; chat.setAttribute('hidden', ''); home.removeAttribute('hidden'); home.style.display = 'flex'; field.placeholder = 'HABLA CON EL RÍO SAN PEDRO…'; window.scrollTo(0, 0); actualizarSombraComposer(); });
+document.getElementById('back').addEventListener('click', () => { chat.style.display = 'none'; chat.setAttribute('hidden', ''); home.removeAttribute('hidden'); home.style.display = 'flex'; field.placeholder = t('composer_placeholder'); window.scrollTo(0, 0); actualizarSombraComposer(); });
 </script>
 </body>
 </html>
